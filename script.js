@@ -30,16 +30,63 @@
     questionnaireForm: document.querySelector("[data-questionnaire-form]"),
     formStatus: document.querySelector("[data-form-status]"),
     backButton: document.querySelector("[data-step-back]"),
+    captchaWrap: document.querySelector(".captcha-wrap"),
     nextButton: document.querySelector("[data-step-next]"),
     submitButton: document.querySelector("[data-step-submit]")
   };
+
+  const questionnaireRuntime = buildQuestionnaireRuntime();
 
   const questionnaireState = {
     isOpen: false,
     activeStepIndex: 0,
     selectedServiceId: "",
-    values: {}
+    values: {},
+    isSubmitting: false,
+    autoAdvanceTimer: 0,
+    captchaSyncTimer: 0
   };
+
+  function isFormControl(element) {
+    return (
+      element instanceof HTMLInputElement ||
+      element instanceof HTMLSelectElement ||
+      element instanceof HTMLTextAreaElement
+    );
+  }
+
+  function getQuestionPageFields(page) {
+    if (!page || page.kind !== "questions") {
+      return [];
+    }
+
+    return page.fieldNames
+      .map((fieldName) => questionnaireRuntime.fieldsByName[fieldName])
+      .filter(Boolean)
+      .map((entry) => entry.field);
+  }
+
+  function getCurrentFields() {
+    return getQuestionPageFields(getCurrentPage());
+  }
+
+  function getFieldControls(fieldName) {
+    return {
+      radios: dom.stepFields.querySelectorAll(`input[type="radio"][name="${fieldName}"]`),
+      checkboxes: dom.stepFields.querySelectorAll(`input[type="checkbox"][name="${fieldName}"]`),
+      otherInput: dom.stepFields.querySelector(`input[name="${fieldName}__other"]`),
+      input: dom.stepFields.querySelector(`[name="${fieldName}"]`)
+    };
+  }
+
+  function getStoredOtherValue(fieldName) {
+    return questionnaireState.values[`${fieldName}__other`] || "";
+  }
+
+  function getSelectedChoiceValue(inputs) {
+    const selected = Array.from(inputs).find((input) => input instanceof HTMLInputElement && input.checked);
+    return selected instanceof HTMLInputElement ? selected.value : "";
+  }
 
   function resetInitialScroll() {
     if ("scrollRestoration" in window.history) {
@@ -314,6 +361,8 @@
     questionnaireState.activeStepIndex = 0;
     questionnaireState.selectedServiceId = serviceId;
     questionnaireState.values = serviceDefaults;
+    window.clearTimeout(questionnaireState.autoAdvanceTimer);
+    window.clearInterval(questionnaireState.captchaSyncTimer);
 
     dom.modal.hidden = false;
     requestAnimationFrame(() => dom.modal.classList.add("is-open"));
@@ -339,6 +388,8 @@
     }
 
     questionnaireState.isOpen = false;
+    window.clearTimeout(questionnaireState.autoAdvanceTimer);
+    window.clearInterval(questionnaireState.captchaSyncTimer);
     dom.modal.classList.remove("is-open");
     document.body.classList.remove("has-modal-open");
     window.setTimeout(() => {
@@ -351,46 +402,117 @@
     return config.offers.find((offer) => offer.id === questionnaireState.selectedServiceId) || null;
   }
 
-  function renderQuestionnaireStep() {
-    const step = config.questionnaire.steps[questionnaireState.activeStepIndex];
+  function buildQuestionnaireRuntime() {
+    const fieldEntries = config.questionnaire.steps.flatMap((step, stepIndex) =>
+      step.fields.map((field, fieldIndex) => ({
+        id: field.name,
+        field,
+        step,
+        stepIndex,
+        fieldIndex
+      }))
+    );
 
-    if (!step || !dom.stepFields) {
+    const fieldsByName = Object.fromEntries(fieldEntries.map((entry) => [entry.field.name, entry]));
+    const configuredGroups = Array.isArray(config.questionnaire.pageGroups)
+      ? config.questionnaire.pageGroups
+      : [];
+    const questionPages = configuredGroups.length
+      ? configuredGroups.map((group, index) => buildGroupedPage(group, index, fieldsByName))
+      : fieldEntries.map((entry, index) => buildSingleFieldPage(entry, index));
+    const lastQuestionPage = questionPages[questionPages.length - 1];
+    const submitStep = config.questionnaire.submitStep || {};
+
+    const pages = [
+      ...questionPages,
+      {
+        id: "submit",
+        kind: "submit",
+        fieldNames: [],
+        kicker: submitStep.kicker || "Posledný krok",
+        title: submitStep.title || "Potvrdenie a odoslanie",
+        description:
+          submitStep.description ||
+          "Skontroluj si odpovede, dokonči captcha a odošli dotazník.",
+        media: lastQuestionPage ? lastQuestionPage.media : null
+      }
+    ];
+
+    return { fieldEntries, fieldsByName, pages };
+  }
+
+  function buildSingleFieldPage(entry, index) {
+    return {
+      id: `${entry.step.id}-${entry.field.name}-${index + 1}`,
+      kind: "questions",
+      fieldNames: [entry.field.name],
+      kicker: entry.field.kicker || entry.step.kicker,
+      title: entry.field.modalTitle || entry.step.title,
+      description: entry.field.modalDescription || entry.step.description,
+      media: entry.field.media || entry.step.media
+    };
+  }
+
+  function buildGroupedPage(group, index, fieldsByName) {
+    const normalizedGroup = Array.isArray(group) ? { fields: group } : group;
+    const fieldNames = Array.isArray(normalizedGroup.fields) ? normalizedGroup.fields : [];
+    const firstEntry = fieldsByName[fieldNames[0]];
+
+    return {
+      id: normalizedGroup.id || `page-group-${index + 1}`,
+      kind: "questions",
+      fieldNames,
+      kicker: normalizedGroup.kicker || (firstEntry ? firstEntry.step.kicker : ""),
+      title: normalizedGroup.title || (firstEntry ? firstEntry.step.title : ""),
+      description: normalizedGroup.description || (firstEntry ? firstEntry.step.description : ""),
+      media: normalizedGroup.media || (firstEntry ? firstEntry.step.media : null)
+    };
+  }
+
+  function getCurrentPage() {
+    return questionnaireRuntime.pages[questionnaireState.activeStepIndex] || null;
+  }
+
+  function renderQuestionnaireStep() {
+    const page = getCurrentPage();
+
+    if (!page || !dom.stepFields) {
       return;
     }
 
     clearStatus();
-    renderStepHeader(step);
-    transitionStepFields(step);
+    renderStepHeader(page);
+    transitionStepFields(page);
     updateStepControls();
   }
 
-  function renderStepHeader(step) {
+  function renderStepHeader(page) {
     const selectedService = getSelectedService();
     const current = questionnaireState.activeStepIndex + 1;
-    const total = config.questionnaire.steps.length;
+    const total = questionnaireRuntime.pages.length;
     const counterText = config.questionnaire.stepCounterLabel
       .replace("{current}", String(current))
       .replace("{total}", String(total));
 
     if (dom.modalMediaKicker) {
-      dom.modalMediaKicker.textContent = step.kicker;
+      dom.modalMediaKicker.textContent = page.kicker;
     }
 
     if (dom.modalTitle) {
-      dom.modalTitle.textContent = step.title;
+      dom.modalTitle.textContent = page.title;
     }
 
     if (dom.modalDescription) {
-      dom.modalDescription.textContent = step.description;
+      dom.modalDescription.textContent = page.description;
     }
 
-    if (dom.modalImage && step.media) {
-      dom.modalImage.src = step.media.src;
-      dom.modalImage.alt = step.media.alt;
+    if (dom.modalImage && page.media) {
+      dom.modalImage.src = page.media.src;
+      dom.modalImage.alt = page.media.alt;
     }
 
     if (dom.modalMediaCaption) {
-      dom.modalMediaCaption.textContent = step.media && step.media.caption ? step.media.caption : "";
+      dom.modalMediaCaption.textContent = page.media && page.media.caption ? page.media.caption : "";
     }
 
     if (dom.selectedService) {
@@ -407,17 +529,23 @@
     }
   }
 
-  function transitionStepFields(step) {
+  function transitionStepFields(page) {
     dom.stepFields.classList.remove("is-active");
+    window.clearTimeout(questionnaireState.autoAdvanceTimer);
 
     window.setTimeout(() => {
-      dom.stepFields.innerHTML = step.fields.map(renderFieldMarkup).join("");
-      hydrateStepValues();
+      if (page.kind === "submit") {
+        dom.stepFields.innerHTML = renderSubmitStepMarkup();
+      } else {
+        dom.stepFields.innerHTML = getQuestionPageFields(page).map(renderFieldMarkup).join("");
+        hydrateStepValues();
+      }
       dom.stepFields.classList.add("is-active");
       const firstField = dom.stepFields.querySelector("input, select, textarea");
       if (firstField) {
         firstField.focus();
       }
+      syncStepActionState();
     }, 110);
   }
 
@@ -536,204 +664,228 @@
     const fields = dom.stepFields.querySelectorAll("input, select, textarea");
 
     fields.forEach((field) => {
-      if (
-        field instanceof HTMLInputElement ||
-        field instanceof HTMLSelectElement ||
-        field instanceof HTMLTextAreaElement
-      ) {
-        const value = questionnaireState.values[field.name];
-        const otherFieldName = field.getAttribute("data-other-input-for");
+      if (!isFormControl(field)) {
+        return;
+      }
 
-        if (field.type === "radio") {
-          if (typeof value === "string") {
-            if (field.value === value) {
-              field.checked = true;
-            }
+      const value = questionnaireState.values[field.name];
+      const otherFieldName = field.getAttribute("data-other-input-for");
 
-            if (field.value === "__other__" && questionnaireState.values[`${field.name}__other`]) {
-              field.checked = true;
-            }
-          }
-          return;
-        }
-
-        if (field.type === "checkbox") {
-          if (Array.isArray(value) && value.includes(field.value)) {
-            field.checked = true;
-          }
-
-          if (
-            field.value === "__other__" &&
-            questionnaireState.values[`${field.name}__other`] &&
-            Array.isArray(value) &&
-            value.includes("__other__")
-          ) {
-            field.checked = true;
-          }
-          return;
-        }
-
-        if (otherFieldName) {
-          const otherValue = questionnaireState.values[`${otherFieldName}__other`];
-          if (typeof otherValue === "string") {
-            field.value = otherValue;
-          }
-          return;
-        }
-
+      if (field.type === "radio") {
         if (typeof value === "string") {
-          field.value = value;
+          field.checked =
+            field.value === value || (field.value === "__other__" && Boolean(getStoredOtherValue(field.name)));
         }
+        return;
+      }
+
+      if (field.type === "checkbox") {
+        if (Array.isArray(value)) {
+          field.checked =
+            value.includes(field.value) ||
+            (field.value === "__other__" && Boolean(getStoredOtherValue(field.name)) && value.includes("__other__"));
+        }
+        return;
+      }
+
+      if (otherFieldName) {
+        field.value = getStoredOtherValue(otherFieldName);
+        return;
+      }
+
+      if (typeof value === "string") {
+        field.value = value;
       }
     });
 
     setupChoiceFieldInteractions();
+    setupStepValuePersistence();
   }
 
   function persistVisibleValues() {
-    const step = config.questionnaire.steps[questionnaireState.activeStepIndex];
+    const fields = getCurrentFields();
 
-    if (!step) {
+    if (!fields.length) {
       return;
     }
 
-    step.fields.forEach((fieldConfig) => {
+    fields.forEach((fieldConfig) => {
+      const controls = getFieldControls(fieldConfig.name);
+      const otherValue =
+        controls.otherInput instanceof HTMLInputElement ? controls.otherInput.value.trim() : "";
+
       if (fieldConfig.type === "radio") {
-        const selected = dom.stepFields.querySelector(`input[type="radio"][name="${fieldConfig.name}"]:checked`);
-        questionnaireState.values[fieldConfig.name] = selected ? selected.value : "";
-
-        if (fieldConfig.other && fieldConfig.other.enabled) {
-          const otherInput = dom.stepFields.querySelector(`input[name="${fieldConfig.name}__other"]`);
-          questionnaireState.values[`${fieldConfig.name}__other`] =
-            otherInput instanceof HTMLInputElement ? otherInput.value.trim() : "";
-        }
-
-        return;
+        questionnaireState.values[fieldConfig.name] = getSelectedChoiceValue(controls.radios);
+      } else if (fieldConfig.type === "checkbox") {
+        questionnaireState.values[fieldConfig.name] = Array.from(controls.checkboxes)
+          .filter((input) => input instanceof HTMLInputElement && input.checked)
+          .map((input) => input.value);
+      } else if (isFormControl(controls.input)) {
+        questionnaireState.values[fieldConfig.name] = controls.input.value.trim();
       }
 
-      if (fieldConfig.type === "checkbox") {
-        const selected = Array.from(
-          dom.stepFields.querySelectorAll(`input[type="checkbox"][name="${fieldConfig.name}"]:checked`)
-        ).map((input) => input.value);
-
-        questionnaireState.values[fieldConfig.name] = selected;
-
-        if (fieldConfig.other && fieldConfig.other.enabled) {
-          const otherInput = dom.stepFields.querySelector(`input[name="${fieldConfig.name}__other"]`);
-          questionnaireState.values[`${fieldConfig.name}__other`] =
-            otherInput instanceof HTMLInputElement ? otherInput.value.trim() : "";
-        }
-
-        return;
-      }
-
-      const input = dom.stepFields.querySelector(`[name="${fieldConfig.name}"]`);
-      if (
-        input instanceof HTMLInputElement ||
-        input instanceof HTMLSelectElement ||
-        input instanceof HTMLTextAreaElement
-      ) {
-        questionnaireState.values[fieldConfig.name] = input.value.trim();
+      if (fieldConfig.other && fieldConfig.other.enabled) {
+        questionnaireState.values[`${fieldConfig.name}__other`] = otherValue;
       }
     });
   }
 
   function updateStepControls() {
     const isFirst = questionnaireState.activeStepIndex === 0;
-    const isLast = questionnaireState.activeStepIndex === config.questionnaire.steps.length - 1;
+    const page = getCurrentPage();
+    const isSubmitPage = page && page.kind === "submit";
 
     if (dom.backButton) {
       dom.backButton.hidden = isFirst;
     }
 
     if (dom.nextButton) {
-      dom.nextButton.hidden = isLast;
+      dom.nextButton.hidden = Boolean(isSubmitPage);
     }
 
     if (dom.submitButton) {
-      dom.submitButton.hidden = !isLast;
+      dom.submitButton.hidden = !isSubmitPage;
+    }
+
+    if (dom.captchaWrap) {
+      dom.captchaWrap.hidden = !isSubmitPage;
     }
   }
 
-  function validateCurrentStep() {
-    const step = config.questionnaire.steps[questionnaireState.activeStepIndex];
+  function validateCurrentStep(options) {
+    const settings = {
+      focusInvalid: true,
+      ...options
+    };
+    const page = getCurrentPage();
+    const fields = getCurrentFields();
 
-    if (!step) {
-      return false;
+    if (page && page.kind === "submit") {
+      return validateSubmitStep(settings.focusInvalid);
     }
 
-    for (const fieldConfig of step.fields) {
-      if (fieldConfig.type === "radio") {
-        const selected = dom.stepFields.querySelector(`input[type="radio"][name="${fieldConfig.name}"]:checked`);
-        if (fieldConfig.required && !selected) {
-          return false;
-        }
-
-        if (selected && selected.value === "__other__") {
-          const otherInput = dom.stepFields.querySelector(`input[name="${fieldConfig.name}__other"]`);
-          if (otherInput instanceof HTMLInputElement && otherInput.value.trim() === "") {
-            otherInput.focus();
-            return false;
-          }
-        }
-
-        continue;
-      }
-
-      if (fieldConfig.type === "checkbox") {
-        const selected = Array.from(
-          dom.stepFields.querySelectorAll(`input[type="checkbox"][name="${fieldConfig.name}"]:checked`)
-        );
-
-        if (fieldConfig.required && selected.length === 0) {
-          return false;
-        }
-
-        if (fieldConfig.maxSelections && selected.length > fieldConfig.maxSelections) {
-          return false;
-        }
-
-        const otherChecked = selected.find((input) => input.value === "__other__");
-        if (otherChecked) {
-          const otherInput = dom.stepFields.querySelector(`input[name="${fieldConfig.name}__other"]`);
-          if (otherInput instanceof HTMLInputElement && otherInput.value.trim() === "") {
-            otherInput.focus();
-            return false;
-          }
-        }
-
-        continue;
-      }
-
-      const input = dom.stepFields.querySelector(`[name="${fieldConfig.name}"]`);
-      if (
-        input instanceof HTMLInputElement ||
-        input instanceof HTMLSelectElement ||
-        input instanceof HTMLTextAreaElement
-      ) {
-        if (!input.reportValidity()) {
-          return false;
-        }
-      }
+    if (!fields.length) {
+      return true;
     }
 
     persistVisibleValues();
+
+    for (const fieldConfig of fields) {
+      if (!validateField(fieldConfig, settings.focusInvalid)) {
+        return false;
+      }
+    }
+
     return true;
   }
 
-  function buildGoogleFormsPayload(values) {
-    return values;
+  function validateSubmitStep(focusInvalid) {
+    const emailInput = dom.stepFields.querySelector('[name="email"]');
+
+    if (!(emailInput instanceof HTMLInputElement)) {
+      return true;
+    }
+
+    questionnaireState.values.email = emailInput.value.trim();
+    syncSubmitEmailError(emailInput);
+
+    if (!emailInput.value.trim()) {
+      if (focusInvalid) {
+        emailInput.focus();
+      }
+      return false;
+    }
+
+    return focusInvalid ? emailInput.reportValidity() : emailInput.checkValidity();
+  }
+
+  function syncSubmitEmailError(emailInput) {
+    const errorNode = dom.stepFields.querySelector("[data-email-error]");
+
+    if (!errorNode || !(emailInput instanceof HTMLInputElement)) {
+      return;
+    }
+
+    const hasValue = emailInput.value.trim().length > 0;
+    const showInvalidMessage = hasValue && emailInput.validity.typeMismatch;
+    errorNode.textContent = showInvalidMessage
+      ? config.questionnaire.submitStep.emailInvalidMessage
+      : "";
+  }
+
+  function hasCaptchaResponse() {
+    if (!dom.questionnaireForm) {
+      return false;
+    }
+
+    const formData = new FormData(dom.questionnaireForm);
+    const captchaResponse = formData.get("h-captcha-response");
+    return typeof captchaResponse === "string" && captchaResponse.trim().length > 0;
+  }
+
+  function validateField(fieldConfig, focusInvalid) {
+    if (!fieldConfig) {
+      return false;
+    }
+
+    const controls = getFieldControls(fieldConfig.name);
+
+    if (fieldConfig.type === "radio") {
+      const selectedValue = getSelectedChoiceValue(controls.radios);
+      const isOtherSelected = selectedValue === "__other__";
+
+      if (fieldConfig.required && !selectedValue) {
+        return false;
+      }
+
+      if (isOtherSelected && controls.otherInput instanceof HTMLInputElement && controls.otherInput.value.trim() === "") {
+        if (focusInvalid) {
+          controls.otherInput.focus();
+        }
+        return false;
+      }
+
+      return true;
+    }
+
+    if (fieldConfig.type === "checkbox") {
+      const selected = Array.from(controls.checkboxes).filter(
+        (input) => input instanceof HTMLInputElement && input.checked
+      );
+
+      if (fieldConfig.required && selected.length === 0) {
+        return false;
+      }
+
+      if (fieldConfig.maxSelections && selected.length > fieldConfig.maxSelections) {
+        return false;
+      }
+
+      const otherChecked = selected.find((input) => input.value === "__other__");
+      if (
+        otherChecked &&
+        controls.otherInput instanceof HTMLInputElement &&
+        controls.otherInput.value.trim() === ""
+      ) {
+        if (focusInvalid) {
+          controls.otherInput.focus();
+        }
+        return false;
+      }
+
+      return true;
+    }
+
+    if (isFormControl(controls.input)) {
+      return focusInvalid ? controls.input.reportValidity() : controls.input.checkValidity();
+    }
+
+    return !fieldConfig.required;
   }
 
   async function submitQuestionnaire() {
     if (!validateCurrentStep()) {
       setStatus(config.questionnaire.errorMessage, "error");
-      return;
-    }
-
-    const captchaResponse = dom.questionnaireForm.querySelector('[name="h-captcha-response"]');
-    if (!(captchaResponse instanceof HTMLInputElement) || !captchaResponse.value.trim()) {
-      setStatus("Please complete the captcha.", "error");
       return;
     }
 
@@ -747,6 +899,11 @@
 
     try {
       const formData = new FormData(dom.questionnaireForm);
+      if (!hasCaptchaResponse()) {
+        setStatus(config.questionnaire.captchaErrorMessage, "error");
+        return;
+      }
+
       Object.entries(payload).forEach(([key, value]) => {
         appendFormDataValue(formData, key, value);
       });
@@ -773,6 +930,7 @@
       setStatus(config.questionnaire.successMessage, "success");
       dom.questionnaireForm.reset();
       questionnaireState.values = {};
+      questionnaireState.activeStepIndex = 0;
       if (window.hcaptcha && typeof window.hcaptcha.reset === "function") {
         window.hcaptcha.reset();
       }
@@ -803,6 +961,7 @@
       height: values.height || "",
       weight: values.weight || "",
       contactHandle: values.contactHandle || "",
+      email: values.email || "",
       gender: normalizeFieldValue(values.gender, values.gender__other),
       fullName: values.fullName || "",
       whyNow: values.whyNow || ""
@@ -825,16 +984,18 @@
 
   function appendFormDataValue(formData, key, value) {
     if (Array.isArray(value)) {
+      formData.delete(key);
       value.forEach((item) => {
         formData.append(key, item);
       });
       return;
     }
 
-    formData.append(key, value);
+    formData.set(key, value);
   }
 
   function setupChoiceFieldInteractions() {
+    const page = getCurrentPage();
     const groups = dom.stepFields.querySelectorAll(".form-field--group");
 
     groups.forEach((group) => {
@@ -859,16 +1020,37 @@
           }
 
           syncOtherInputs(group);
+          persistVisibleValues();
+          syncStepActionState();
         });
       });
 
       radios.forEach((radio) => {
         radio.addEventListener("change", () => {
           syncOtherInputs(group);
+          persistVisibleValues();
+          syncStepActionState();
+          scheduleAutoAdvance(page);
         });
       });
 
       syncOtherInputs(group);
+    });
+  }
+
+  function setupStepValuePersistence() {
+    const inputs = dom.stepFields.querySelectorAll("input, select, textarea");
+
+    inputs.forEach((input) => {
+      input.addEventListener("input", () => {
+        persistVisibleValues();
+        syncStepActionState();
+      });
+
+      input.addEventListener("change", () => {
+        persistVisibleValues();
+        syncStepActionState();
+      });
     });
   }
 
@@ -896,10 +1078,10 @@
       return;
     }
 
+    questionnaireState.isSubmitting = isLoading;
     dom.questionnaireForm.classList.toggle("is-loading", isLoading);
     dom.backButton.disabled = isLoading;
-    dom.nextButton.disabled = isLoading;
-    dom.submitButton.disabled = isLoading;
+    syncStepActionState();
     dom.submitButton.textContent = isLoading
       ? config.questionnaire.loadingLabel
       : config.questionnaire.submitLabel;
@@ -961,6 +1143,108 @@
         closeQuestionnaire();
       }
     });
+  }
+
+  function shouldAutoAdvancePage(page) {
+    if (!page || page.kind !== "questions") {
+      return false;
+    }
+
+    const fields = getQuestionPageFields(page);
+    return fields.length === 1 && fields[0].type === "radio";
+  }
+
+  function scheduleAutoAdvance(page) {
+    if (!shouldAutoAdvancePage(page) || !validateCurrentStep({ focusInvalid: false })) {
+      return;
+    }
+
+    if (questionnaireState.activeStepIndex >= questionnaireRuntime.pages.length - 2) {
+      window.clearTimeout(questionnaireState.autoAdvanceTimer);
+      questionnaireState.autoAdvanceTimer = window.setTimeout(() => {
+        questionnaireState.activeStepIndex += 1;
+        renderQuestionnaireStep();
+      }, config.questionnaire.autoAdvanceDelay || 160);
+      return;
+    }
+
+    window.clearTimeout(questionnaireState.autoAdvanceTimer);
+    questionnaireState.autoAdvanceTimer = window.setTimeout(() => {
+      questionnaireState.activeStepIndex += 1;
+      renderQuestionnaireStep();
+    }, config.questionnaire.autoAdvanceDelay || 160);
+  }
+
+  function syncStepActionState() {
+    const page = getCurrentPage();
+    const isSubmitPage = page && page.kind === "submit";
+    const canProceed = validateCurrentStep({ focusInvalid: false });
+    const hasCaptcha = !isSubmitPage || hasCaptchaResponse();
+
+    if (dom.nextButton) {
+      const disableNext = questionnaireState.isSubmitting || !canProceed;
+      dom.nextButton.disabled = disableNext;
+      dom.nextButton.classList.toggle("is-inactive", disableNext);
+    }
+
+    if (dom.submitButton) {
+      dom.submitButton.disabled = questionnaireState.isSubmitting || !canProceed || !hasCaptcha;
+      dom.submitButton.classList.toggle("is-inactive", dom.submitButton.disabled);
+    }
+
+    if (isSubmitPage && dom.backButton) {
+      dom.backButton.disabled = questionnaireState.isSubmitting;
+    }
+
+    syncCaptchaStateWatcher(isSubmitPage);
+  }
+
+  function syncCaptchaStateWatcher(isSubmitPage) {
+    window.clearInterval(questionnaireState.captchaSyncTimer);
+
+    if (!isSubmitPage || questionnaireState.isSubmitting) {
+      return;
+    }
+
+    questionnaireState.captchaSyncTimer = window.setInterval(() => {
+      const currentPage = getCurrentPage();
+      if (!currentPage || currentPage.kind !== "submit") {
+        window.clearInterval(questionnaireState.captchaSyncTimer);
+        questionnaireState.captchaSyncTimer = 0;
+        return;
+      }
+
+      const emailValid = validateSubmitStep(false);
+      const captchaReady = hasCaptchaResponse();
+
+      if (dom.submitButton) {
+        const shouldDisable = questionnaireState.isSubmitting || !emailValid || !captchaReady;
+        dom.submitButton.disabled = shouldDisable;
+        dom.submitButton.classList.toggle("is-inactive", shouldDisable);
+      }
+    }, 300);
+  }
+
+  function renderSubmitStepMarkup() {
+    return `
+      <div class="questionnaire-review">
+        <p class="questionnaire-review__hint">${config.questionnaire.submitStep.editHint}</p>
+        <div class="form-field">
+          <label for="submit-email">${config.questionnaire.submitStep.emailLabel}</label>
+          <input
+            id="submit-email"
+            name="email"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            placeholder="${config.questionnaire.submitStep.emailPlaceholder}"
+            value="${questionnaireState.values.email || ""}"
+            required
+          >
+          <p class="field-error" data-email-error aria-live="polite"></p>
+        </div>
+      </div>
+    `;
   }
 
   function init() {

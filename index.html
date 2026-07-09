@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Osobný tréner pre chlapov | Prémiový fitness coaching</title>
+  <meta
+    name="description"
+    content="Osobný tréner pre chlapov, ktorí chcú výsledky, nie výhovorky. Tréningový systém, jasný plán a dlhodobo udržateľné vedenie."
+  >
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="sk_SK">
+  <meta property="og:title" content="Osobný tréner pre chlapov | Prémiový fitness coaching">
+  <meta
+    property="og:description"
+    content="Jednoduchý tréningový systém, jasný plán a vedenie, ktoré ťa udrží v pohybe."
+  >
+  <meta property="og:image" content="assets/images/coach-hero-placeholder.svg">
+  <meta name="theme-color" content="#F7F2EC">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Cormorant+Garamond:wght@600;700&display=swap"
+    rel="stylesheet"
+  >
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header" data-header>
+      <div class="container site-header__inner">
+        <a class="site-brand" href="#top" aria-label="Domov" data-brand>
+          <span class="site-brand__eyebrow">Osobný koučing</span>
+          <span class="site-brand__name">Meno trénera</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+          data-nav-toggle
+        >
+          <span class="nav-toggle__line"></span>
+          <span class="nav-toggle__line"></span>
+          <span class="nav-toggle__line"></span>
+          <span class="sr-only">Otvoriť navigáciu</span>
+        </button>
+
+        <nav class="site-nav" id="site-nav" aria-label="Hlavná navigácia" data-nav>
+          <ul class="site-nav__list" data-nav-list>
+            <li><a href="#offers">Spolupráca</a></li>
+            <li><a href="#testimonials">Referencie</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="hero section" id="top" data-section="hero">
+        <div class="container hero__grid">
+          <div class="hero__content reveal" data-reveal>
+            <p class="section-kicker">Prémiový osobný coaching pre mužov</p>
+            <h1>
+              Osobný tréner pre chlapov, ktorí chcú výsledky, nie výhovorky
+            </h1>
+            <p class="hero__lead">
+              Jednoduchý tréningový systém, jasný plán a vedenie, ktoré ťa udrží v pohybe
+              — bez zbytočných rečí.
+            </p>
+            <div class="hero__actions" data-hero-actions>
+              <a class="button button--ghost" href="#offers">Pozrieť možnosti spolupráce</a>
+            </div>
+          </div>
+
+          <div class="hero__media reveal" data-reveal>
+            <!-- Replace the hero image path and alt text in config.js -->
+            <img
+              src="assets/images/coach-hero-placeholder.svg"
+              alt="Portrét osobného trénera"
+              width="720"
+              height="900"
+              loading="eager"
+              fetchpriority="high"
+              data-hero-image
+            >
+          </div>
+        </div>
+      </section>
+
+      <section class="offers section" id="offers" data-section="offers">
+        <div class="container">
+          <div class="section-heading reveal" data-reveal>
+            <p class="section-kicker">Služby</p>
+            <h2>Vyber si formu spolupráce, ktorá ti dáva zmysel</h2>
+          </div>
+          <div class="card-grid" data-offers-list>
+            <article class="info-card">
+              <h3>Osobný tréning</h3>
+              <p>Tréning naživo s technikou, plánom a jasným postupom podľa tvojej úrovne.</p>
+              <button class="button button--ghost" type="button">Zistiť viac</button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="testimonials section" id="testimonials" data-section="testimonials">
+        <div class="container">
+          <div class="section-heading reveal" data-reveal>
+            <p class="section-kicker">Referencie</p>
+            <h2>Krátko, vecne, bez zbytočnej omáčky</h2>
+          </div>
+          <div class="card-grid card-grid--quotes" data-testimonials-list>
+            <blockquote class="quote-card">
+              <p>“Konečne som mal plán, ktorému som rozumel a ktorý som vedel dodržať.”</p>
+              <footer>Martin, 34</footer>
+            </blockquote>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer section">
+      <div class="container site-footer__inner" data-footer-content>
+        <p>Meno trénera</p>
+        <a href="mailto:coach@example.com">coach@example.com</a>
+        <a href="#top">Späť hore</a>
+      </div>
+    </footer>
+  </div>
+
+  <div class="modal" data-form-modal hidden>
+    <div class="modal__backdrop" data-modal-close></div>
+    <div
+      class="modal__dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="questionnaire-title"
+      aria-describedby="questionnaire-description"
+    >
+      <button class="modal__close" type="button" aria-label="Zavrieť formulár" data-modal-close>
+        ×
+      </button>
+
+      <div class="modal__grid">
+        <aside class="modal__media">
+          <p class="section-kicker" data-step-media-kicker>Krátky dotazník</p>
+          <h2 id="questionnaire-title" data-step-title>Vyplň pár otázok</h2>
+          <p id="questionnaire-description" data-step-description>
+            Krátky formulár mi pomôže pripraviť vhodný návrh spolupráce.
+          </p>
+          <img
+            src="assets/images/form-step-coach-placeholder.svg"
+            alt="Ilustračný detail tréningového procesu"
+            width="560"
+            height="520"
+            loading="lazy"
+            data-step-image
+          >
+          <p class="modal__media-caption" data-step-media-caption>
+            Krátko a vecne. Nezaberie to viac než chvíľu.
+          </p>
+          <p class="modal__service-badge" data-selected-service>Vybraná služba</p>
+        </aside>
+
+        <div class="modal__content">
+          <div class="modal__progress">
+            <span data-step-counter>Krok 1 z 3</span>
+            <div class="modal__progress-bar" aria-hidden="true">
+              <span data-step-progress></span>
+            </div>
+          </div>
+
+          <form class="questionnaire-form" data-questionnaire-form novalidate>
+            <input type="hidden" name="access_key" value="5dee312d-3731-4444-81ac-a702c785035d">
+            <input type="hidden" name="subject" value="New website form submission">
+            <div class="questionnaire-form__step is-active" data-step-fields></div>
+            <div class="captcha-wrap" hidden>
+              <div class="h-captcha" data-captcha="true"></div>
+            </div>
+
+            <div class="questionnaire-form__actions">
+              <button class="button button--ghost" type="button" data-step-back hidden>
+                Späť
+              </button>
+              <button class="button button--primary" type="button" data-step-next>
+                Pokračovať
+              </button>
+              <button class="button button--primary" type="submit" data-step-submit hidden>
+                Odoslať
+              </button>
+            </div>
+
+            <p class="form-status" role="status" aria-live="polite" data-form-status></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+  <script src="https://web3forms.com/client/script.js" async defer></script>
+</body>
+</html>
