@@ -188,6 +188,20 @@
       return;
     }
 
+    const section = document.querySelector('#testimonials .section-heading');
+    if (section && config.testimonialsSection) {
+      const kicker = section.querySelector(".section-kicker");
+      const title = section.querySelector("h2");
+
+      if (kicker) {
+        kicker.textContent = config.testimonialsSection.kicker;
+      }
+
+      if (title) {
+        title.textContent = config.testimonialsSection.title;
+      }
+    }
+
     dom.testimonialsList.innerHTML = config.testimonials
       .map(
         (item) => `

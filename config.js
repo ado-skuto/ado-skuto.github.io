@@ -1,21 +1,21 @@
 window.SITE_CONFIG = {
   // Basic brand and SEO values. Safe to edit.
   brand: {
-    coachName: "Matej Kovac",
+    coachName: "Aďo Škuťo",
     eyebrow: "Osobný koučing",
-    pageTitle: "Matej Kovac | Osobný tréner pre chlapov",
+    pageTitle: "Aďo Škuťo - Osobný tréner",
     metaDescription:
-      "Osobný tréner pre chlapov, ktorí chcú výsledky, nie výhovorky. Praktický tréningový systém, jasný plán a dlhodobé vedenie.",
+      "Osobný tréner pre ľudí, ktorí chcú výsledky, nie výhovorky. Praktický tréningový systém, jasný plán a dlhodobé vedenie.",
     ogImage: "assets/images/coach-hero-placeholder.svg",
     language: "sk"
   },
 
   contact: {
-    email: "coach@example.com",
+    email: "ado.skuto.business@gmail.com",
     phone: "+421 900 000 000",
     socialLinks: [
-      { label: "Instagram", href: "https://instagram.com/", icon: "instagram" },
-      { label: "YouTube", href: "https://youtube.com/", icon: "youtube" }
+      { label: "Instagram", href: "https://www.instagram.com/ado_skuto/", icon: "instagram" },
+      { label: "YouTube", href: "https://www.youtube.com/@AdoSkuto1", icon: "youtube" }
     ]
   },
 
@@ -24,11 +24,16 @@ window.SITE_CONFIG = {
     { label: "Referencie", href: "#testimonials" }
   ],
 
+  testimonialsSection: {
+    kicker: "Referencie",
+    title: "Skúsenosti klientov"
+  },
+
   hero: {
-    kicker: "Prémiový osobný coaching pre mužov",
-    headline: "Osobný tréner pre chlapov, ktorí chcú výsledky, nie výhovorky",
+    kicker: "Prémiový osobný coaching",
+    headline: "Osobný tréner pre ľudí, ktorí chcú výsledky, nie výhovorky",
     subheadline:
-      "Jednoduchý tréningový systém, jasný plán a vedenie, ktoré ťa udrží v pohybe — bez zbytočných rečí.",
+      "Jednoduchý tréningový systém, jasný plán a vedenie, ktoré ťa udrží v pohybe.",
     secondaryCta: { label: "Pozrieť možnosti spolupráce", href: "#offers" },
     // Replace with a real image in assets/images/ and update alt text here.
     image: {
@@ -932,7 +937,7 @@ window.SITE_CONFIG = {
 
   footer: {
     copyright:
-      "© <span data-current-year></span> Matej Kovac. Všetky práva vyhradené.",
+      "© <span data-current-year></span> Aďo Škuťo. Všetky práva vyhradené.",
     backToTopLabel: "Späť hore"
   }
 };
