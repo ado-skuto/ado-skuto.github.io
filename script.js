@@ -35,12 +35,12 @@
     submitButton: document.querySelector("[data-step-submit]")
   };
 
-  const questionnaireRuntime = buildQuestionnaireRuntime();
-
   const questionnaireState = {
     isOpen: false,
     activeStepIndex: 0,
     selectedServiceId: "",
+    config: null,
+    runtime: null,
     values: {},
     isSubmitting: false,
     autoAdvanceTimer: 0,
@@ -56,12 +56,12 @@
   }
 
   function getQuestionPageFields(page) {
-    if (!page || page.kind !== "questions") {
+    if (!page || page.kind !== "questions" || !questionnaireState.runtime) {
       return [];
     }
 
     return page.fieldNames
-      .map((fieldName) => questionnaireRuntime.fieldsByName[fieldName])
+      .map((fieldName) => questionnaireState.runtime.fieldsByName[fieldName])
       .filter(Boolean)
       .map((entry) => entry.field);
   }
@@ -169,7 +169,12 @@
           <article class="info-card reveal" data-reveal>
             <h3>${offer.title}</h3>
             <p>${offer.description}</p>
-            <button class="button button--ghost" type="button" data-service-trigger="${offer.id}">
+            <button
+              class="button button--ghost"
+              type="button"
+              data-service-trigger="${offer.id}"
+              ${offer.disabled ? "disabled" : ""}
+            >
               ${offer.ctaLabel || config.questionnaire.triggerLabelFallback}
             </button>
           </article>
@@ -356,10 +361,13 @@
     }
 
     const serviceDefaults = getServiceDefaults(serviceId);
+    const questionnaireConfig = getQuestionnaireConfigForService(serviceId);
 
     questionnaireState.isOpen = true;
     questionnaireState.activeStepIndex = 0;
     questionnaireState.selectedServiceId = serviceId;
+    questionnaireState.config = questionnaireConfig;
+    questionnaireState.runtime = buildQuestionnaireRuntime(questionnaireConfig);
     questionnaireState.values = serviceDefaults;
     window.clearTimeout(questionnaireState.autoAdvanceTimer);
     window.clearInterval(questionnaireState.captchaSyncTimer);
@@ -388,6 +396,8 @@
     }
 
     questionnaireState.isOpen = false;
+    questionnaireState.config = null;
+    questionnaireState.runtime = null;
     window.clearTimeout(questionnaireState.autoAdvanceTimer);
     window.clearInterval(questionnaireState.captchaSyncTimer);
     dom.modal.classList.remove("is-open");
@@ -402,8 +412,30 @@
     return config.offers.find((offer) => offer.id === questionnaireState.selectedServiceId) || null;
   }
 
-  function buildQuestionnaireRuntime() {
-    const fieldEntries = config.questionnaire.steps.flatMap((step, stepIndex) =>
+  function getQuestionnaireConfigForService(serviceId) {
+    const selectedService = config.offers.find((offer) => offer.id === serviceId);
+    const flowKey = selectedService && selectedService.flow ? selectedService.flow : "";
+    const flowOverride =
+      flowKey && config.questionnaire.flows && config.questionnaire.flows[flowKey]
+        ? config.questionnaire.flows[flowKey]
+        : {};
+
+    return {
+      ...config.questionnaire,
+      ...flowOverride,
+      submitStep: {
+        ...config.questionnaire.submitStep,
+        ...(flowOverride.submitStep || {})
+      },
+      submission: {
+        ...config.questionnaire.submission,
+        ...(flowOverride.submission || {})
+      }
+    };
+  }
+
+  function buildQuestionnaireRuntime(questionnaireConfig) {
+    const fieldEntries = questionnaireConfig.steps.flatMap((step, stepIndex) =>
       step.fields.map((field, fieldIndex) => ({
         id: field.name,
         field,
@@ -414,14 +446,14 @@
     );
 
     const fieldsByName = Object.fromEntries(fieldEntries.map((entry) => [entry.field.name, entry]));
-    const configuredGroups = Array.isArray(config.questionnaire.pageGroups)
-      ? config.questionnaire.pageGroups
+    const configuredGroups = Array.isArray(questionnaireConfig.pageGroups)
+      ? questionnaireConfig.pageGroups
       : [];
     const questionPages = configuredGroups.length
       ? configuredGroups.map((group, index) => buildGroupedPage(group, index, fieldsByName))
       : fieldEntries.map((entry, index) => buildSingleFieldPage(entry, index));
     const lastQuestionPage = questionPages[questionPages.length - 1];
-    const submitStep = config.questionnaire.submitStep || {};
+    const submitStep = questionnaireConfig.submitStep || {};
 
     const pages = [
       ...questionPages,
@@ -470,7 +502,11 @@
   }
 
   function getCurrentPage() {
-    return questionnaireRuntime.pages[questionnaireState.activeStepIndex] || null;
+    if (!questionnaireState.runtime) {
+      return null;
+    }
+
+    return questionnaireState.runtime.pages[questionnaireState.activeStepIndex] || null;
   }
 
   function renderQuestionnaireStep() {
@@ -489,7 +525,7 @@
   function renderStepHeader(page) {
     const selectedService = getSelectedService();
     const current = questionnaireState.activeStepIndex + 1;
-    const total = questionnaireRuntime.pages.length;
+    const total = questionnaireState.runtime ? questionnaireState.runtime.pages.length : 0;
     const counterText = config.questionnaire.stepCounterLabel
       .replace("{current}", String(current))
       .replace("{total}", String(total));
@@ -556,7 +592,8 @@
       field.required ? "required" : "",
       field.placeholder ? `placeholder="${field.placeholder}"` : "",
       field.autocomplete ? `autocomplete="${field.autocomplete}"` : "",
-      field.inputmode ? `inputmode="${field.inputmode}"` : ""
+      field.inputmode ? `inputmode="${field.inputmode}"` : "",
+      field.pattern ? `pattern="${field.pattern}"` : ""
     ]
       .filter(Boolean)
       .join(" ");
@@ -637,6 +674,7 @@
       <div class="form-field">
         <label for="${field.name}">${field.label}</label>
         <input ${commonAttributes} type="${field.type}">
+        ${field.invalidMessage ? `<p class="field-error" data-field-error-for="${field.name}" aria-live="polite"></p>` : ""}
       </div>
     `;
   }
@@ -877,6 +915,13 @@
     }
 
     if (isFormControl(controls.input)) {
+      if (controls.input instanceof HTMLInputElement && fieldConfig.invalidMessage) {
+        const hasValue = controls.input.value.trim().length > 0;
+        const isPatternMismatch = controls.input.validity.patternMismatch;
+        controls.input.setCustomValidity(hasValue && isPatternMismatch ? fieldConfig.invalidMessage : "");
+        syncInlineFieldError(controls.input);
+      }
+
       return focusInvalid ? controls.input.reportValidity() : controls.input.checkValidity();
     }
 
@@ -908,7 +953,7 @@
         appendFormDataValue(formData, key, value);
       });
 
-      const response = await fetch(config.questionnaire.submission.endpointUrl, {
+      const response = await fetch(questionnaireState.config.submission.endpointUrl, {
         method: "POST",
         headers: {
           Accept: "application/json"
@@ -943,9 +988,13 @@
   }
 
   function buildSubmissionPayload(values) {
+    const submissionConfig = questionnaireState.config
+      ? questionnaireState.config.submission
+      : config.questionnaire.submission;
+
     return {
-      access_key: config.questionnaire.submission.accessKey,
-      subject: config.questionnaire.submission.subject,
+      access_key: submissionConfig.accessKey,
+      subject: submissionConfig.subject,
       submittedAt: new Date().toISOString(),
       pageTitle: config.brand.pageTitle,
       service: values.selectedService || "",
@@ -957,6 +1006,8 @@
       trainingExperience: normalizeFieldValue(values.trainingExperience, values.trainingExperience__other),
       limitations: normalizeFieldValue(values.limitations, values.limitations__other),
       sessionsPerWeek: normalizeFieldValue(values.sessionsPerWeek, values.sessionsPerWeek__other),
+      workoutLength: normalizeFieldValue(values.workoutLength, values.workoutLength__other),
+      equipmentAccess: normalizeFieldValue(values.equipmentAccess, values.equipmentAccess__other),
       age: values.age || "",
       height: values.height || "",
       weight: values.weight || "",
@@ -1041,17 +1092,36 @@
   function setupStepValuePersistence() {
     const inputs = dom.stepFields.querySelectorAll("input, select, textarea");
 
-    inputs.forEach((input) => {
-      input.addEventListener("input", () => {
-        persistVisibleValues();
-        syncStepActionState();
-      });
+      inputs.forEach((input) => {
+        input.addEventListener("input", () => {
+          persistVisibleValues();
+          syncInlineFieldError(input);
+          syncStepActionState();
+        });
 
-      input.addEventListener("change", () => {
-        persistVisibleValues();
-        syncStepActionState();
+        input.addEventListener("change", () => {
+          persistVisibleValues();
+          syncInlineFieldError(input);
+          syncStepActionState();
+        });
       });
-    });
+    }
+
+  function syncInlineFieldError(input) {
+    if (!(input instanceof HTMLInputElement)) {
+      return;
+    }
+
+    const errorNode = dom.stepFields.querySelector(`[data-field-error-for="${input.name}"]`);
+    const fieldConfig = getCurrentFields().find((field) => field.name === input.name);
+
+    if (!errorNode || !fieldConfig || !fieldConfig.invalidMessage) {
+      return;
+    }
+
+    const hasValue = input.value.trim().length > 0;
+    const showInvalidMessage = hasValue && input.validity.patternMismatch;
+    errorNode.textContent = showInvalidMessage ? fieldConfig.invalidMessage : "";
   }
 
   function syncOtherInputs(group) {
@@ -1159,7 +1229,11 @@
       return;
     }
 
-    if (questionnaireState.activeStepIndex >= questionnaireRuntime.pages.length - 2) {
+    if (!questionnaireState.runtime) {
+      return;
+    }
+
+    if (questionnaireState.activeStepIndex >= questionnaireState.runtime.pages.length - 2) {
       window.clearTimeout(questionnaireState.autoAdvanceTimer);
       questionnaireState.autoAdvanceTimer = window.setTimeout(() => {
         questionnaireState.activeStepIndex += 1;

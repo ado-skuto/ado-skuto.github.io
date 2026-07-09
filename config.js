@@ -44,21 +44,24 @@ window.SITE_CONFIG = {
       title: "Osobný tréning",
       description:
         "Tréning naživo s technikou, plánom a jasným postupom podľa tvojej úrovne.",
-      ctaLabel: "Zistiť viac"
+      ctaLabel: "Zistiť viac",
+      flow: "personalTraining"
     },
     {
       id: "online-coaching",
       title: "Online coaching",
       description:
         "Vedenie na diaľku, tréningový plán, kontrola progresu a pravidelná spätná väzba.",
-      ctaLabel: "Zistiť viac"
+      ctaLabel: "Zistiť viac",
+      flow: "onlineCoaching"
     },
     {
       id: "training-plan",
       title: "Zostavenie tréningového plánu",
       description:
         "Individuálny tréningový plán postavený podľa tvojho cieľa, režimu a aktuálnej úrovne.",
-      ctaLabel: "Zistiť viac"
+      ctaLabel: "Zistiť viac",
+      flow: "trainingPlan"
     }
   ],
 
@@ -108,15 +111,603 @@ window.SITE_CONFIG = {
       emailRequiredMessage: "Zadaj prosím email.",
       emailInvalidMessage: "Zadaj email v správnom formáte."
     },
-    // Optional future grouping:
-    // pageGroups: [
-    //   ["fullName", "contactHandle"],
-    //   {
-    //     id: "contact",
-    //     title: "Kontakt",
-    //     fields: ["fullName", "contactHandle"]
-    //   }
-    // ],
+    flows: {
+      personalTraining: {
+        submission: {
+          provider: "web3forms",
+          endpointUrl: "https://api.web3forms.com/submit",
+          accessKey: "d500eaea-022c-4cee-a9fc-ba8c504a2f3b",
+          subject: "Osobny trening - new website form submission"
+        },
+        pageGroups: [
+          ["goals"],
+          ["trainingApproach"],
+          ["currentFrustration"],
+          ["blockers"],
+          ["trainingExperience"],
+          ["limitations"],
+          ["sessionsPerWeek"],
+          {
+            id: "body-stats",
+            title: "Základné údaje",
+            description: "Doplň vek, výšku a váhu pre lepší kontext.",
+            fields: ["age", "height", "weight"]
+          },
+          {
+            id: "contact-details",
+            title: "Kontakt",
+            description: "Doplň meno, pohlavie a kontakt, aby som sa ti vedel ozvať.",
+            fields: ["contactHandle", "gender", "fullName"]
+          },
+          ["whyNow"]
+        ],
+        steps: [
+          {
+            id: "goals",
+            kicker: "Krok 1",
+            title: "Hlavný cieľ",
+            description: "Najprv si nastavme, čo chceš dosiahnuť.",
+            media: {
+              src: "assets/images/form-step-coach-placeholder.svg",
+              alt: "Detail tréningového coachingu",
+              caption: "Krátko a vecne. Nezaberie to viac než chvíľu."
+            },
+            fields: [
+              {
+                name: "goals",
+                label: "Čo by si chcel dosiahnuť? Vyber maximálne 2 možnosti, ktoré chceš najviac.",
+                type: "checkbox",
+                required: true,
+                maxSelections: 2,
+                options: [
+                  "Nabrať svaly",
+                  "Schudnúť",
+                  "Spevniť postavu",
+                  "Cítiť sa lepšie / mať viac energie",
+                  "Len sa začať hýbať"
+                ],
+                other: {
+                  enabled: true,
+                  label: "Iné",
+                  placeholder: "Doplň vlastnú odpoveď"
+                }
+              }
+            ]
+          },
+          {
+            id: "mindset",
+            kicker: "Krok 2",
+            title: "Prístup a prekážky",
+            description: "Tu chcem pochopiť, ako to berieš a čo ťa doteraz brzdilo.",
+            media: {
+              src: "assets/images/form-step-goal-placeholder.svg",
+              alt: "Plánovanie tréningového cieľa",
+              caption: "Jasný cieľ znamená jasnejší plán."
+            },
+            fields: [
+              {
+                name: "trainingApproach",
+                label: "Ako chceš pristupovať k tréningom?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Chcem sa hýbať a cítiť sa lepšie, bez veľkého tlaku",
+                  "Chcem vidieť výsledky a som ochotný maknúť",
+                  "Beriem to vážne, chcem zmenu naplno"
+                ]
+              },
+              {
+                name: "currentFrustration",
+                label: "Čo ťa na tvojej aktuálnej situácii štve najviac?",
+                type: "textarea",
+                required: true,
+                rows: 4,
+                placeholder: "Napíš stručne, čo chceš zmeniť"
+              },
+              {
+                name: "blockers",
+                label: "Čo ti doteraz stálo v ceste?",
+                type: "checkbox",
+                required: true,
+                options: [
+                  "Nedostatok času",
+                  "Nevedel som kde začať",
+                  "Chýbala motivácia",
+                  "Financie",
+                  "Zdravotné problémy"
+                ],
+                other: {
+                  enabled: true,
+                  label: "Iné",
+                  placeholder: "Doplň vlastnú odpoveď"
+                }
+              },
+              {
+                name: "trainingExperience",
+                label: "Aké máš skúsenosti s cvičením?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Žiadne",
+                  "Cvičil som, ale nepravidelne",
+                  "Mám základy, chcem posunúť ďalej",
+                  "Cvičím pravidelne, chcem optimalizovať"
+                ]
+              }
+            ]
+          },
+          {
+            id: "details",
+            kicker: "Krok 3",
+            title: "Praktické detaily",
+            description: "Doplň zdravotné obmedzenia, tréningovú frekvenciu a základné údaje.",
+            media: {
+              src: "assets/images/form-step-details-placeholder.svg",
+              alt: "Praktické nastavenie spolupráce",
+              caption: "Čím presnejší kontext, tým lepší návrh spolupráce."
+            },
+            fields: [
+              {
+                name: "limitations",
+                label: "Máš nejaké zdravotné obmedzenia, zranenia, bolesť alebo iné veci ktoré by som mal vedieť pred tréningom?",
+                type: "radio",
+                required: true,
+                options: ["Nič"],
+                other: {
+                  enabled: true,
+                  label: "Iné",
+                  placeholder: "Popíš obmedzenia alebo dôležité informácie"
+                }
+              },
+              {
+                name: "sessionsPerWeek",
+                label: "Koľko krát do týždňa vieš alebo by si chcel cvičiť?",
+                type: "radio",
+                required: true,
+                options: ["1x", "2x", "3x", "4x", "5x", "6x", "7x"]
+              },
+              {
+                name: "age",
+                label: "Tvoj vek (roky)",
+                type: "text",
+                required: false,
+                inputmode: "numeric",
+                placeholder: "Napríklad 29",
+                pattern: "^[0-9]+$",
+                invalidMessage: "Zadaj číslo."
+              },
+              {
+                name: "height",
+                label: "Výška (cm)",
+                type: "text",
+                required: false,
+                inputmode: "numeric",
+                placeholder: "Napríklad 182",
+                pattern: "^[0-9]+$",
+                invalidMessage: "Zadaj číslo."
+              },
+              {
+                name: "weight",
+                label: "Váha (kg)",
+                type: "text",
+                required: false,
+                inputmode: "numeric",
+                placeholder: "Napríklad 84",
+                pattern: "^[0-9]+$",
+                invalidMessage: "Zadaj číslo."
+              }
+            ]
+          },
+          {
+            id: "contact",
+            kicker: "Krok 4",
+            title: "Kontakt a záver",
+            description: "Posledný krok. Potrebujem meno, kontakt a prípadne krátky kontext navyše.",
+            media: {
+              src: "assets/images/form-step-coach-placeholder.svg",
+              alt: "Záver dotazníka",
+              caption: "Po odoslaní sa ti ozvem s ďalším postupom."
+            },
+            fields: [
+              {
+                name: "contactHandle",
+                label: "Kde ťa viem kontaktovať? Facebook, Instagram, Whatsapp",
+                type: "text",
+                required: true,
+                placeholder: "Napríklad IG: @tvojprofil alebo telefón"
+              },
+              {
+                name: "gender",
+                label: "Pohlavie",
+                type: "radio",
+                required: true,
+                options: ["Žena", "Muž"]
+              },
+              {
+                name: "fullName",
+                label: "Meno",
+                type: "text",
+                autocomplete: "name",
+                required: true,
+                placeholder: "Tvoje meno"
+              },
+              {
+                name: "whyNow",
+                label: "Bonus: Prečo práve teraz?",
+                type: "textarea",
+                required: false,
+                rows: 4,
+                placeholder: "Ak chceš, doplň krátky dôvod"
+              }
+            ]
+          }
+        ]
+      },
+      onlineCoaching: {
+        submission: {
+          provider: "web3forms",
+          endpointUrl: "https://api.web3forms.com/submit",
+          accessKey: "072ef63a-acf7-43df-8fd9-145abc6749f8",
+          subject: "Online coaching - new website form submission"
+        },
+        pageGroups: [
+          ["goals"],
+          ["trainingApproach"],
+          ["currentFrustration"],
+          ["blockers"],
+          ["trainingExperience"],
+          ["limitations"],
+          ["sessionsPerWeek"],
+          {
+            id: "body-stats",
+            title: "Základné údaje",
+            description: "Doplň vek, výšku a váhu pre lepší kontext.",
+            fields: ["age", "height", "weight"]
+          },
+          {
+            id: "contact-details",
+            title: "Kontakt",
+            description: "Doplň meno, pohlavie a kontakt, aby som sa ti vedel ozvať.",
+            fields: ["contactHandle", "gender", "fullName"]
+          },
+          ["whyNow"]
+        ],
+        steps: [
+          {
+            id: "goals",
+            kicker: "Krok 1",
+            title: "Hlavný cieľ",
+            description: "Najprv si nastavme, čo chceš dosiahnuť.",
+            media: {
+              src: "assets/images/form-step-coach-placeholder.svg",
+              alt: "Detail online coachingu",
+              caption: "Krátko a vecne. Nezaberie to viac než chvíľu."
+            },
+            fields: [
+              {
+                name: "goals",
+                label: "Čo by si chcel dosiahnuť? Vyber maximálne 2 možnosti, ktoré chceš najviac.",
+                type: "checkbox",
+                required: true,
+                maxSelections: 2,
+                options: [
+                  "Nabrať svaly",
+                  "Schudnúť",
+                  "Spevniť postavu",
+                  "Cítiť sa lepšie / mať viac energie",
+                  "Len sa začať hýbať"
+                ],
+                other: {
+                  enabled: true,
+                  label: "Iné",
+                  placeholder: "Doplň vlastnú odpoveď"
+                }
+              }
+            ]
+          },
+          {
+            id: "mindset",
+            kicker: "Krok 2",
+            title: "Prístup a prekážky",
+            description: "Tu chcem pochopiť, ako to berieš a čo ťa doteraz brzdilo.",
+            media: {
+              src: "assets/images/form-step-goal-placeholder.svg",
+              alt: "Plánovanie online coachingu",
+              caption: "Jasný cieľ znamená jasnejší plán."
+            },
+            fields: [
+              {
+                name: "trainingApproach",
+                label: "Ako chceš pristupovať k tréningom?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Chcem sa hýbať a cítiť sa lepšie, bez veľkého tlaku",
+                  "Chcem vidieť výsledky a som ochotný maknúť",
+                  "Beriem to vážne, chcem zmenu naplno"
+                ]
+              },
+              {
+                name: "currentFrustration",
+                label: "Čo ťa na tvojej aktuálnej situácii štve najviac?",
+                type: "textarea",
+                required: true,
+                rows: 4,
+                placeholder: "Napíš stručne, čo chceš zmeniť"
+              },
+              {
+                name: "blockers",
+                label: "Čo ti doteraz stálo v ceste?",
+                type: "checkbox",
+                required: true,
+                options: [
+                  "Nedostatok času",
+                  "Nevedel som kde začať",
+                  "Chýbala motivácia",
+                  "Financie",
+                  "Zdravotné problémy"
+                ],
+                other: {
+                  enabled: true,
+                  label: "Iné",
+                  placeholder: "Doplň vlastnú odpoveď"
+                }
+              },
+              {
+                name: "trainingExperience",
+                label: "Aké máš skúsenosti s cvičením?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Žiadne",
+                  "Cvičil som, ale nepravidelne",
+                  "Mám základy, chcem posunúť ďalej",
+                  "Cvičím pravidelne, chcem optimalizovať"
+                ]
+              }
+            ]
+          },
+          {
+            id: "details",
+            kicker: "Krok 3",
+            title: "Praktické detaily",
+            description: "Doplň zdravotné obmedzenia, tréningovú frekvenciu a základné údaje.",
+            media: {
+              src: "assets/images/form-step-details-placeholder.svg",
+              alt: "Praktické nastavenie online coachingu",
+              caption: "Čím presnejší kontext, tým lepší návrh spolupráce."
+            },
+            fields: [
+              {
+                name: "limitations",
+                label: "Máš nejaké zdravotné obmedzenia, zranenia, bolesť alebo iné veci ktoré by som mal vedieť pred tréningom?",
+                type: "radio",
+                required: true,
+                options: ["Nič"],
+                other: {
+                  enabled: true,
+                  label: "Iné",
+                  placeholder: "Popíš obmedzenia alebo dôležité informácie"
+                }
+              },
+              {
+                name: "sessionsPerWeek",
+                label: "Koľko krát do týždňa vieš alebo by si chcel cvičiť?",
+                type: "radio",
+                required: true,
+                options: ["1x", "2x", "3x", "4x", "5x", "6x", "7x"]
+              },
+              {
+                name: "age",
+                label: "Tvoj vek (roky)",
+                type: "text",
+                required: false,
+                inputmode: "numeric",
+                placeholder: "Napríklad 29",
+                pattern: "^[0-9]+$",
+                invalidMessage: "Zadaj číslo."
+              },
+              {
+                name: "height",
+                label: "Výška (cm)",
+                type: "text",
+                required: false,
+                inputmode: "numeric",
+                placeholder: "Napríklad 182",
+                pattern: "^[0-9]+$",
+                invalidMessage: "Zadaj číslo."
+              },
+              {
+                name: "weight",
+                label: "Váha (kg)",
+                type: "text",
+                required: false,
+                inputmode: "numeric",
+                placeholder: "Napríklad 84",
+                pattern: "^[0-9]+$",
+                invalidMessage: "Zadaj číslo."
+              }
+            ]
+          },
+          {
+            id: "contact",
+            kicker: "Krok 4",
+            title: "Kontakt a záver",
+            description: "Posledný krok. Potrebujem meno, kontakt a prípadne krátky kontext navyše.",
+            media: {
+              src: "assets/images/form-step-coach-placeholder.svg",
+              alt: "Záver online coachingu",
+              caption: "Po odoslaní sa ti ozvem s ďalším postupom."
+            },
+            fields: [
+              {
+                name: "contactHandle",
+                label: "Kde ťa viem kontaktovať? Facebook, Instagram, Whatsapp",
+                type: "text",
+                required: true,
+                placeholder: "Napríklad IG: @tvojprofil alebo telefón"
+              },
+              {
+                name: "gender",
+                label: "Pohlavie",
+                type: "radio",
+                required: true,
+                options: ["Žena", "Muž"]
+              },
+              {
+                name: "fullName",
+                label: "Meno",
+                type: "text",
+                autocomplete: "name",
+                required: true,
+                placeholder: "Tvoje meno"
+              },
+              {
+                name: "whyNow",
+                label: "Bonus: Prečo práve teraz?",
+                type: "textarea",
+                required: false,
+                rows: 4,
+                placeholder: "Ak chceš, doplň krátky dôvod"
+              }
+            ]
+          }
+        ]
+      },
+      trainingPlan: {
+        submission: {
+          provider: "web3forms",
+          endpointUrl: "https://api.web3forms.com/submit",
+          accessKey: "192e9762-0b1f-4d08-862d-a1916d603a2f",
+          subject: "Training plan - new website form submission"
+        },
+        pageGroups: [
+          ["goals"],
+          ["sessionsPerWeek"],
+          ["workoutLength"],
+          ["equipmentAccess"],
+          ["trainingExperience"]
+        ],
+        steps: [
+          {
+            id: "training-plan-goals",
+            kicker: "Krok 1",
+            title: "Cieľ plánu",
+            description: "Najprv si ujasnime, čo chceš tréningovým plánom dosiahnuť.",
+            media: {
+              src: "assets/images/form-step-goal-placeholder.svg",
+              alt: "Plánovanie tréningového cieľa",
+              caption: "Dobrý plán začína jasným cieľom."
+            },
+            fields: [
+              {
+                name: "goals",
+                label: "Čo by si chcel dosiahnuť? Vyber maximálne 2 možnosti.",
+                type: "checkbox",
+                required: true,
+                maxSelections: 2,
+                options: [
+                  "Nabrať svaly",
+                  "Schudnúť",
+                  "Spevniť postavu",
+                  "Zlepšiť kondíciu",
+                  "Mať jasný systém"
+                ],
+                other: {
+                  enabled: true,
+                  label: "Iné",
+                  placeholder: "Doplň vlastnú odpoveď"
+                }
+              },
+              {
+                name: "sessionsPerWeek",
+                label: "Koľko krát do týždňa vieš alebo by si chcel cvičiť?",
+                type: "radio",
+                required: true,
+                options: ["1x", "2x", "3x", "4x", "5x", "6x", "7x"]
+              }
+            ]
+          },
+          {
+            id: "training-plan-details",
+            kicker: "Krok 2",
+            title: "Nastavenie plánu",
+            description: "Potrebujem vedieť, koľko času máš na tréning a s akým vybavením počítať.",
+            media: {
+              src: "assets/images/form-step-details-placeholder.svg",
+              alt: "Nastavenie tréningového plánu",
+              caption: "Čím presnejšie zadanie, tým použiteľnejší plán."
+            },
+            fields: [
+              {
+                name: "workoutLength",
+                label: "Aká dĺžka tréningu ti vyhovuje najviac?",
+                type: "radio",
+                required: true,
+                options: [
+                  "30 minút",
+                  "45 minút",
+                  "1 hodina",
+                  "1 a pol hodiny",
+                  "2 hodiny"
+                ]
+              },
+              {
+                name: "equipmentAccess",
+                label: "Kde budeš cvičiť najčastejšie?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Vo fitku",
+                  "Doma s vybavením",
+                  "Doma bez vybavenia",
+                  "Kombinácia"
+                ],
+                other: {
+                  enabled: true,
+                  label: "Iné",
+                  placeholder: "Doplň vlastnú odpoveď"
+                }
+              },
+              {
+                name: "trainingExperience",
+                label: "Aké máš skúsenosti s cvičením?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Žiadne",
+                  "Cvičil som, ale nepravidelne",
+                  "Mám základy, chcem posunúť ďalej",
+                  "Cvičím pravidelne, chcem lepší systém"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    pageGroups: [
+      ["goals"],
+      ["trainingApproach"],
+      ["currentFrustration"],
+      ["blockers"],
+      ["trainingExperience"],
+      ["limitations"],
+      ["sessionsPerWeek"],
+      {
+        id: "body-stats",
+        title: "Základné údaje",
+        description: "Doplň vek, výšku a váhu pre lepší kontext.",
+        fields: ["age", "height", "weight"]
+      },
+      {
+        id: "contact-details",
+        title: "Kontakt",
+        description: "Doplň meno, pohlavie a kontakt, aby som sa ti vedel ozvať.",
+        fields: ["contactHandle", "gender", "fullName"]
+      },
+      ["whyNow"]
+    ],
     submission: {
       provider: "web3forms",
       endpointUrl: "https://api.web3forms.com/submit",
@@ -127,24 +718,14 @@ window.SITE_CONFIG = {
       {
         id: "cooperation",
         kicker: "Krok 1",
-        title: "Typ spolupráce a hlavný cieľ",
-        description: "Najprv si nastavme, o aký typ spolupráce máš záujem a čo chceš dosiahnuť.",
+        title: "Hlavný cieľ",
+        description: "Najprv si nastavme, čo chceš dosiahnuť.",
         media: {
           src: "assets/images/form-step-coach-placeholder.svg",
           alt: "Detail tréningového coachingu",
           caption: "Krátko a vecne. Nezaberie to viac než chvíľu."
         },
         fields: [
-          {
-            name: "cooperationType",
-            label: "Typ spolupráce",
-            type: "radio",
-            required: true,
-            options: [
-              "Osobné tréningy",
-              "Online coaching"
-            ]
-          },
           {
             name: "goals",
             label: "Čo by si chcel dosiahnuť? Vyber maximálne 2 možnosti, ktoré chceš najviac.",
@@ -262,32 +843,41 @@ window.SITE_CONFIG = {
               "1x",
               "2x",
               "3x",
-              "4x"
+              "4x",
+              "5x",
+              "6x",
+              "7x"
             ]
           },
           {
             name: "age",
-            label: "Tvoj vek",
+            label: "Tvoj vek (roky)",
             type: "text",
             required: false,
             inputmode: "numeric",
-            placeholder: "Napríklad 29"
+            placeholder: "Napríklad 29",
+            pattern: "^[0-9]+$",
+            invalidMessage: "Zadaj číslo."
           },
           {
             name: "height",
-            label: "Výška",
+            label: "Výška (cm)",
             type: "text",
             required: false,
             inputmode: "numeric",
-            placeholder: "Napríklad 182 cm"
+            placeholder: "Napríklad 182",
+            pattern: "^[0-9]+$",
+            invalidMessage: "Zadaj číslo."
           },
           {
             name: "weight",
-            label: "Váha",
+            label: "Váha (kg)",
             type: "text",
             required: false,
             inputmode: "numeric",
-            placeholder: "Napríklad 84 kg"
+            placeholder: "Napríklad 84",
+            pattern: "^[0-9]+$",
+            invalidMessage: "Zadaj číslo."
           }
         ]
       },
