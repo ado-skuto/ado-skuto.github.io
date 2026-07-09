@@ -1,0 +1,65 @@
+:root {
+  /* Quick theme switching:
+     Update the values below to change the palette globally.
+     Keep semantic variable names stable so styles.css does not need structural edits. */
+  --color-bg: #f7f2ec;
+  --color-surface: #fffdf9;
+  --color-surface-strong: #f3ebe2;
+  --color-text: #2f241d;
+  --color-muted: #6e6259;
+  --color-primary: #8a6a4f;
+  --color-primary-dark: #6b513c;
+  --color-accent: #6f8faf;
+  --color-accent-dark: #314b63;
+  --color-border: #e5d8ca;
+  --color-success: #2f6b52;
+  --color-error: #9a3d35;
+  --color-overlay: rgba(47, 36, 29, 0.08);
+  --color-shadow: rgba(50, 36, 24, 0.12);
+
+  --font-body: "Manrope", "Segoe UI", sans-serif;
+  --font-heading: "Cormorant Garamond", Georgia, serif;
+
+  --font-size-xs: 0.875rem;
+  --font-size-sm: 0.95rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: clamp(1.35rem, 3vw, 2rem);
+  --font-size-2xl: clamp(2.5rem, 6vw, 4.8rem);
+
+  --line-height-tight: 1.05;
+  --line-height-base: 1.65;
+  --line-height-loose: 1.8;
+
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4.5rem;
+  --space-4xl: 6rem;
+
+  --radius-sm: 0.75rem;
+  --radius-md: 1.25rem;
+  --radius-lg: 2rem;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 24px 60px var(--color-shadow);
+  --shadow-card: 0 16px 40px rgba(49, 75, 99, 0.08);
+
+  --transition-fast: 160ms ease;
+  --transition-base: 260ms ease;
+
+  --container-max: 1180px;
+  --container-narrow: 840px;
+  --section-space: clamp(4.5rem, 8vw, 7rem);
+  --header-height: 5.5rem;
+
+  --button-padding: 0.95rem 1.4rem;
+  --button-border: 1px solid transparent;
+
+  --input-height: 3.4rem;
+  --input-padding: 0.95rem 1rem;
+}
