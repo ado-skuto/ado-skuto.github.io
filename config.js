@@ -587,18 +587,32 @@ window.SITE_CONFIG = {
           subject: "Training plan - new website form submission"
         },
         pageGroups: [
-          ["goals"],
+          ["mainPriority"],
           ["sessionsPerWeek"],
           ["workoutLength"],
           ["equipmentAccess"],
-          ["trainingExperience"]
+          ["weakPoints"],
+          ["legApproach"],
+          ["legPriority"],
+          ["splitPreference"],
+          ["trainingLevel"],
+          ["cardioApproach"],
+          ["dietStatus"],
+          ["additionalInfo"],
+          {
+            id: "contact-details",
+            title: "Kontakt",
+            description: "Na záver doplň meno a kontakt, aby som ti mohol plán doručiť a ozvať sa.",
+            fields: ["contactHandle", "fullName"]
+          }
         ],
         steps: [
           {
-            id: "training-plan-goals",
+            id: "training-plan-intro",
             kicker: "Krok 1",
             title: "Cieľ plánu",
-            description: "Najprv si ujasnime, čo chceš tréningovým plánom dosiahnuť.",
+            description:
+              "Podpora po kúpe — Po doručení splitu máš 2 týždne na otázky a úpravy. Zľava na coaching — k plánu vieš neskôr nadviazať coachingom za výhodnejších podmienok.",
             media: {
               src: "assets/images/form-step-goal-placeholder.svg",
               alt: "Plánovanie tréningového cieľa",
@@ -606,35 +620,27 @@ window.SITE_CONFIG = {
             },
             fields: [
               {
-                name: "goals",
-                label: "Čo by si chcel dosiahnuť? Vyber maximálne 2 možnosti.",
-                type: "checkbox",
+                name: "mainPriority",
+                label: "Čo je tvoja hlavná priorita?",
+                type: "radio",
                 required: true,
-                maxSelections: 2,
                 options: [
-                  "Nabrať svaly",
-                  "Schudnúť",
-                  "Spevniť postavu",
-                  "Zlepšiť kondíciu",
-                  "Mať jasný systém"
-                ],
-                other: {
-                  enabled: true,
-                  label: "Iné",
-                  placeholder: "Doplň vlastnú odpoveď"
-                }
+                  "Budovanie svalov",
+                  "Zlepšenie daného cviku (SBD)",
+                  "Oboje"
+                ]
               },
               {
                 name: "sessionsPerWeek",
-                label: "Koľko krát do týždňa vieš alebo by si chcel cvičiť?",
+                label: "Koľko dní v týždni môžeš trénovať?",
                 type: "radio",
                 required: true,
-                options: ["1x", "2x", "3x", "4x", "5x", "6x", "7x"]
+                options: ["2×", "3×", "4×", "5×", "6×", "Chcem si nechať odporučiť"]
               }
             ]
           },
           {
-            id: "training-plan-details",
+            id: "training-plan-setup",
             kicker: "Krok 2",
             title: "Nastavenie plánu",
             description: "Potrebujem vedieť, koľko času máš na tréning a s akým vybavením počítať.",
@@ -650,11 +656,11 @@ window.SITE_CONFIG = {
                 type: "radio",
                 required: true,
                 options: [
-                  "30 minút",
-                  "45 minút",
+                  "45 minút a menej",
                   "1 hodina",
-                  "1 a pol hodiny",
-                  "2 hodiny"
+                  "1,5 hodiny",
+                  "2 hodiny",
+                  "2,5+ hodiny"
                 ]
               },
               {
@@ -663,28 +669,168 @@ window.SITE_CONFIG = {
                 type: "radio",
                 required: true,
                 options: [
-                  "Vo fitku",
-                  "Doma s vybavením",
-                  "Doma bez vybavenia",
-                  "Kombinácia"
-                ],
-                other: {
-                  enabled: true,
-                  label: "Iné",
-                  placeholder: "Doplň vlastnú odpoveď"
-                }
-              },
+                  "Posilňovňa (plné vybavenie)",
+                  "Domáca posilňovňa",
+                  "Minimálne vybavenie (jednoručky, odporové gumy)",
+                  "Vonku / bez vybavenia"
+                ]
+              }
+            ]
+          },
+          {
+            id: "training-plan-focus",
+            kicker: "Krok 3",
+            title: "Priority",
+            description: "Chcem pochopiť, čo chceš v tréningu najviac zlepšiť.",
+            media: {
+              src: "assets/images/form-step-details-placeholder.svg",
+              alt: "Priority tréningového plánu",
+              caption: "Čím presnejšie priority, tým lepšie nastavený split."
+            },
+            fields: [
               {
-                name: "trainingExperience",
-                label: "Aké máš skúsenosti s cvičením?",
+                name: "weakPoints",
+                label: "Čo sú tvoje slabiny alebo čo by si chcel najviac zlepšiť?",
                 type: "radio",
                 required: true,
                 options: [
-                  "Žiadne",
-                  "Cvičil som, ale nepravidelne",
-                  "Mám základy, chcem posunúť ďalej",
-                  "Cvičím pravidelne, chcem lepší systém"
+                  "Prsia",
+                  "Chrbát (šírka)",
+                  "Chrbát (hrúbka)",
+                  "Ramená",
+                  "Biceps",
+                  "Triceps",
+                  "Nič neuprednostňujem, nechám to na tebe",
+                  "Neviem to posúdiť sám (pošlem ti fotky)"
                 ]
+              },
+              {
+                name: "legApproach",
+                label: "Ako pristupuješ k nohám?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Chcem ich aktívne rozvíjať a zlepšovať",
+                  "Stačí mi ich udržiavať / precvičovať",
+                  "Nohy nechcem prioritizovať",
+                  "Prioritou je zadok"
+                ]
+              },
+              {
+                name: "legPriority",
+                label: "Ktorú časť nôh chceš najviac zlepšiť?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Kvadricepsy (predná strana stehien)",
+                  "Hamstringy (zadná strana stehien)",
+                  "Zadok (gluteálne svaly)",
+                  "Adduktory",
+                  "Lýtka"
+                ]
+              }
+            ]
+          },
+          {
+            id: "training-plan-preferences",
+            kicker: "Krok 4",
+            title: "Preferencie",
+            description: "Ešte pár otázok k štýlu tréningu a aktuálnej úrovni.",
+            media: {
+              src: "assets/images/form-step-goal-placeholder.svg",
+              alt: "Preferencie tréningového plánu",
+              caption: "Tieto detaily rozhodujú o tom, ako bude split vyzerať."
+            },
+            fields: [
+              {
+                name: "splitPreference",
+                label: "Preferuješ určitý typ splitu?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Nie",
+                  "Preferujem cvičiť celé telo",
+                  "Chcem mať partie rozdelené"
+                ]
+              },
+              {
+                name: "trainingLevel",
+                label: "Ako by si opísal svoju úroveň?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Začiatočník (menej ako 6 mesiacov)",
+                  "Mierne pokročilý (1 – 2 roky)",
+                  "Pokročilý (3 – 5 rokov)",
+                  "Súťažná / vysoká úroveň"
+                ]
+              },
+              {
+                name: "cardioApproach",
+                label: "Robíš alebo plánuješ robiť kardio?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Nie",
+                  "Áno, ľahké (chôdza, bicykel)",
+                  "Áno, intenzívne (beh, HIIT)",
+                  "Nechám to na tebe",
+                  "Venujem sa aj inému športu"
+                ]
+              },
+              {
+                name: "dietStatus",
+                label: "Si momentálne v diéte alebo ju plánuješ?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Áno",
+                  "Nie",
+                  "Neriešim to"
+                ]
+              }
+            ]
+          },
+          {
+            id: "training-plan-notes",
+            kicker: "Krok 5",
+            title: "Doplňujúce informácie",
+            description: "Ak je niečo dôležité, sem to určite napíš.",
+            media: {
+              src: "assets/images/form-step-coach-placeholder.svg",
+              alt: "Doplňujúce informácie k plánu",
+              caption: "Zranenia, špecifiká alebo čokoľvek, čo by som mal vedieť."
+            },
+            fields: [
+              {
+                name: "additionalInfo",
+                label: "Chceš mi povedať niečo ďalšie?",
+                type: "textarea",
+                required: false,
+                rows: 5,
+                placeholder: "Zranenia, špecifické požiadavky alebo čokoľvek, čo by som mal vedieť."
+              },
+              {
+                name: "contactHandle",
+                label: "Kde ťa viem kontaktovať? Instagram, Whatsapp alebo telefón",
+                type: "text",
+                required: true,
+                placeholder: "Napríklad IG: @tvojprofil alebo telefón"
+              },
+              {
+                name: "gender",
+                label: "Pohlavie",
+                type: "radio",
+                required: true,
+                options: ["Žena", "Muž"]
+              },
+              {
+                name: "fullName",
+                label: "Meno",
+                type: "text",
+                autocomplete: "name",
+                required: true,
+                placeholder: "Tvoje meno"
               }
             ]
           }
