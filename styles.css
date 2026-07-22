@@ -19,18 +19,6 @@ body {
   overflow-x: clip;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(115deg, rgb(86 124 157 / 10%) 0 1px, transparent 1px 18px),
-    linear-gradient(180deg, rgb(252 250 246 / 54%), rgb(241 233 220 / 70%));
-  opacity: 0.45;
-  z-index: -2;
-}
-
 body.has-modal-open {
   overflow: hidden;
 }
@@ -83,8 +71,50 @@ button {
 }
 
 .page-shell {
+  position: relative;
   overflow: clip;
   transition: filter var(--transition-base);
+}
+
+/* Background system
+   Edit this section when tuning the page background.
+   The foreground scrolls normally; these layers use --background-scroll-y
+   to drift more slowly than the content. */
+.page-shell::before,
+.page-shell::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  will-change: transform;
+}
+
+.page-shell::before {
+  inset: -10vh -12vw -20vh;
+  min-height: calc(100% + 30vh);
+  background:
+    linear-gradient(180deg, #F6EEE3 0%, var(--color-bg) 42%, #EEF2F2 100%),
+    linear-gradient(102deg, transparent 0 12%, rgb(86 124 157 / 13%) 12% 12.2%, transparent 12.2% 100%),
+    linear-gradient(102deg, transparent 0 14%, rgb(86 124 157 / 8%) 14% 14.2%, transparent 14.2% 100%),
+    repeating-linear-gradient(
+      102deg,
+      transparent 0 34px,
+      rgb(16 42 67 / 4%) 34px 35px,
+      transparent 35px 68px
+    );
+  transform: translate3d(0, calc(var(--background-scroll-y, 0px) * 0.72), 0);
+}
+
+.page-shell::after {
+  inset: -4vh 0 auto;
+  height: 1200px;
+  background:
+    radial-gradient(ellipse at 92% 14%, transparent 0 26%, rgb(86 124 157 / 10%) 26.2% 26.6%, transparent 26.8% 100%),
+    radial-gradient(ellipse at -8% 56%, transparent 0 30%, rgb(180 137 97 / 10%) 30.2% 30.7%, transparent 30.9% 100%),
+    linear-gradient(100deg, transparent 0 16%, rgb(16 42 67 / 7%) 16% 16.25%, transparent 16.25% 100%),
+    linear-gradient(100deg, transparent 0 18%, rgb(16 42 67 / 5%) 18% 18.25%, transparent 18.25% 100%);
+  opacity: 0.9;
+  transform: translate3d(0, calc(var(--background-scroll-y, 0px) * 0.58), 0);
 }
 
 .container {
@@ -97,6 +127,106 @@ button {
   padding: var(--section-space) 0;
   scroll-margin-top: calc(var(--header-height) + 24px);
 }
+
+.section::before,
+.section::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.hero::before {
+  left: -12vw;
+  top: 8%;
+  width: min(50vw, 560px);
+  height: 58%;
+  background:
+    linear-gradient(90deg, rgb(86 124 157 / 12%) 0 1px, transparent 1px 100%),
+    linear-gradient(0deg, rgb(86 124 157 / 8%) 0 1px, transparent 1px 100%);
+  background-size: 46px 46px;
+  clip-path: polygon(0 8%, 86% 0, 100% 76%, 14% 100%);
+  opacity: 0.38;
+  transform: translate3d(0, calc(var(--background-scroll-y, 0px) * 0.54), 0) rotate(-4deg);
+  will-change: transform;
+}
+
+.offers::before {
+  inset: 5% -10vw auto auto;
+  width: min(58vw, 640px);
+  height: 420px;
+  background:
+    linear-gradient(100deg, rgb(16 42 67 / 11%) 0 1px, transparent 1px 56px),
+    linear-gradient(10deg, rgb(16 42 67 / 6%) 0 1px, transparent 1px 56px);
+  background-size: 56px 56px;
+  clip-path: polygon(8% 0, 100% 16%, 84% 100%, 0 78%);
+  opacity: 0.34;
+  transform: translate3d(0, calc(var(--background-scroll-y, 0px) * 0.46), 0) rotate(2deg);
+  will-change: transform;
+}
+
+.offers::after {
+  left: -90px;
+  bottom: 8%;
+  width: 290px;
+  height: 110px;
+  background:
+    radial-gradient(circle at 28px 55px, rgb(16 42 67 / 14%) 0 8px, transparent 9px),
+    radial-gradient(circle at 260px 55px, rgb(16 42 67 / 14%) 0 8px, transparent 9px),
+    linear-gradient(0deg, transparent 0 48px, rgb(16 42 67 / 12%) 48px 52px, transparent 52px 100%),
+    linear-gradient(90deg, transparent 0 82px, rgb(180 137 97 / 14%) 82px 208px, transparent 208px 100%);
+  opacity: 0.42;
+  transform: translate3d(0, calc(var(--background-scroll-y, 0px) * 0.5), 0) rotate(-8deg);
+  will-change: transform;
+}
+
+.testimonials::before {
+  left: 50%;
+  top: 22%;
+  width: min(86vw, 900px);
+  height: 360px;
+  background:
+    radial-gradient(ellipse at 50% 100%, transparent 0 52%, rgb(16 42 67 / 10%) 52.4% 53%, transparent 53.4% 100%),
+    radial-gradient(ellipse at 50% 100%, transparent 0 66%, rgb(86 124 157 / 8%) 66.3% 66.8%, transparent 67.1% 100%);
+  transform: translate3d(-50%, calc(var(--background-scroll-y, 0px) * 0.48), 0);
+  will-change: transform;
+}
+
+.testimonials::after {
+  right: -10vw;
+  bottom: 12%;
+  width: min(48vw, 520px);
+  height: 230px;
+  background:
+    linear-gradient(100deg, rgb(16 42 67 / 8%) 0 1px, transparent 1px),
+    linear-gradient(10deg, rgb(16 42 67 / 5%) 0 1px, transparent 1px);
+  background-size: 48px 48px;
+  clip-path: polygon(0 10%, 92% 0, 100% 84%, 12% 100%);
+  opacity: 0.3;
+  transform: translate3d(0, calc(var(--background-scroll-y, 0px) * 0.44), 0) rotate(-2deg);
+  will-change: transform;
+}
+
+.site-footer::before {
+  left: 8vw;
+  top: -90px;
+  width: 220px;
+  height: 120px;
+  border-top: 2px solid rgb(86 124 157 / 16%);
+  border-bottom: 2px solid rgb(86 124 157 / 10%);
+  transform: skewY(-8deg) translate3d(0, calc(var(--background-scroll-y, 0px) * 0.42), 0);
+}
+
+@media (max-width: 640px) {
+  .hero::before,
+  .offers::before,
+  .offers::after,
+  .testimonials::before,
+  .testimonials::after {
+    opacity: 0.28;
+  }
+}
+/* End background system */
 
 .section-kicker {
   margin: 0 0 var(--space-2);
@@ -400,7 +530,7 @@ button {
 
 .offers {
   background:
-    linear-gradient(180deg, transparent, rgb(252 250 246 / 42%) 18%, rgb(252 250 246 / 42%) 82%, transparent);
+    linear-gradient(180deg, transparent, rgb(252 250 246 / 62%) 13%, rgb(252 250 246 / 62%) 88%, transparent);
 }
 
 .card-grid {
@@ -516,6 +646,8 @@ button {
 
 .testimonials {
   overflow: hidden;
+  background:
+    linear-gradient(180deg, transparent, rgb(86 124 157 / 8%) 20%, rgb(86 124 157 / 8%) 82%, transparent);
 }
 
 .testimonial-carousel {
@@ -1445,6 +1577,16 @@ button {
   [data-reveal] {
     opacity: 1;
     transform: none;
+  }
+
+  body::before,
+  body::after,
+  .page-shell::before,
+  .page-shell::after,
+  .section::before,
+  .section::after {
+    transform: none !important;
+    will-change: auto;
   }
 
   .quote-card,

@@ -462,6 +462,34 @@
     window.addEventListener("scroll", toggleHeaderState, { passive: true });
   }
 
+  function setupBackgroundMotion() {
+    // Drives only the decorative background rules in styles.css.
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (prefersReducedMotion.matches) {
+      return;
+    }
+
+    let isQueued = false;
+
+    const updateBackgroundOffset = () => {
+      document.documentElement.style.setProperty("--background-scroll-y", `${Math.round(window.scrollY)}px`);
+      isQueued = false;
+    };
+
+    const queueBackgroundOffset = () => {
+      if (isQueued) {
+        return;
+      }
+
+      isQueued = true;
+      window.requestAnimationFrame(updateBackgroundOffset);
+    };
+
+    updateBackgroundOffset();
+    window.addEventListener("scroll", queueBackgroundOffset, { passive: true });
+  }
+
   function setupRevealAnimations() {
     const revealItems = document.querySelectorAll("[data-reveal]");
 
@@ -1482,6 +1510,7 @@
     renderQuestionnaireChrome();
     setupMobileNavigation();
     setupScrollState();
+    setupBackgroundMotion();
     setupTestimonialCarousel();
     setupRevealAnimations();
     setupQuestionnaireTriggers();
