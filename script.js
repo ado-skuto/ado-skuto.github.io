@@ -89,6 +89,10 @@
   }
 
   function resetInitialScroll() {
+    if (window.location.hash) {
+      return;
+    }
+
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
@@ -165,10 +169,18 @@
 
     dom.offersList.innerHTML = config.offers
       .map(
-        (offer) => `
+        (offer, index) => {
+          const image = getOfferImage(offer, index);
+
+          return `
           <article class="info-card reveal" data-reveal>
-            <h3>${offer.title}</h3>
-            <p>${offer.description}</p>
+            <div class="info-card__visual" aria-hidden="true">
+              <img src="${image.src}" alt="" width="320" height="240" loading="lazy">
+            </div>
+            <div class="info-card__body">
+              <h3>${offer.title}</h3>
+              <p>${offer.description}</p>
+            </div>
             <button
               class="button button--ghost"
               type="button"
@@ -178,9 +190,40 @@
               ${offer.ctaLabel || config.questionnaire.triggerLabelFallback}
             </button>
           </article>
-        `
+        `;
+        }
       )
       .join("");
+  }
+
+  function getOfferImage(offer, index) {
+    if (typeof offer.image === "string") {
+      return {
+        src: offer.image,
+        alt: ""
+      };
+    }
+
+    if (offer.image) {
+      return offer.image;
+    }
+
+    const fallbackImages = [
+      {
+        src: "assets/images/form-step-coach-placeholder.svg",
+        alt: ""
+      },
+      {
+        src: "assets/images/form-step-goal-placeholder.svg",
+        alt: ""
+      },
+      {
+        src: "assets/images/form-step-details-placeholder.svg",
+        alt: ""
+      }
+    ];
+
+    return fallbackImages[index % fallbackImages.length];
   }
 
   function renderTestimonials() {
@@ -202,16 +245,99 @@
       }
     }
 
-    dom.testimonialsList.innerHTML = config.testimonials
-      .map(
-        (item) => `
-          <blockquote class="quote-card reveal" data-reveal>
+    dom.testimonialsList.classList.remove("card-grid", "card-grid--quotes");
+    dom.testimonialsList.classList.add("testimonial-carousel");
+    dom.testimonialsList.innerHTML = `
+      <button
+        class="testimonial-carousel__button"
+        type="button"
+        aria-label="Predchádzajúca referencia"
+        data-testimonial-prev
+      >
+        ‹
+      </button>
+      <div class="testimonial-carousel__track" data-testimonial-track>
+        ${config.testimonials
+          .map(
+            (item, index) => `
+          <blockquote
+            class="quote-card ${index === 0 ? "is-active" : index === 1 ? "is-next" : index === config.testimonials.length - 1 ? "is-prev" : "is-hidden"}"
+            data-testimonial-index="${index}"
+          >
             <p>“${item.quote}”</p>
             <footer>${item.author}</footer>
+            <span class="quote-card__overlay">Výsledok z praxe</span>
           </blockquote>
         `
-      )
-      .join("");
+          )
+          .join("")}
+      </div>
+      <button
+        class="testimonial-carousel__button"
+        type="button"
+        aria-label="Nasledujúca referencia"
+        data-testimonial-next
+      >
+        ›
+      </button>
+    `;
+  }
+
+  function setupTestimonialCarousel() {
+    if (!dom.testimonialsList) {
+      return;
+    }
+
+    const cards = Array.from(dom.testimonialsList.querySelectorAll("[data-testimonial-index]"));
+    const prevButton = dom.testimonialsList.querySelector("[data-testimonial-prev]");
+    const nextButton = dom.testimonialsList.querySelector("[data-testimonial-next]");
+    let activeIndex = 0;
+
+    if (!cards.length) {
+      return;
+    }
+
+    const updateCarousel = (nextIndex) => {
+      activeIndex = (nextIndex + cards.length) % cards.length;
+      const previousIndex = (activeIndex - 1 + cards.length) % cards.length;
+      const nextVisibleIndex = (activeIndex + 1) % cards.length;
+
+      cards.forEach((card, index) => {
+        card.classList.toggle("is-active", index === activeIndex);
+        card.classList.toggle("is-prev", index === previousIndex);
+        card.classList.toggle("is-next", index === nextVisibleIndex);
+        card.classList.toggle(
+          "is-hidden",
+          index !== activeIndex && index !== previousIndex && index !== nextVisibleIndex
+        );
+
+        if (card instanceof HTMLElement) {
+          card.tabIndex = index === activeIndex || index === previousIndex || index === nextVisibleIndex ? 0 : -1;
+        }
+      });
+    };
+
+    prevButton && prevButton.addEventListener("click", () => updateCarousel(activeIndex - 1));
+    nextButton && nextButton.addEventListener("click", () => updateCarousel(activeIndex + 1));
+
+    cards.forEach((card) => {
+      card.addEventListener("click", () => {
+        const index = Number(card.getAttribute("data-testimonial-index") || "0");
+        updateCarousel(index);
+      });
+
+      card.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") {
+          return;
+        }
+
+        event.preventDefault();
+        const index = Number(card.getAttribute("data-testimonial-index") || "0");
+        updateCarousel(index);
+      });
+    });
+
+    updateCarousel(activeIndex);
   }
 
   function renderFooter() {
@@ -1356,6 +1482,7 @@
     renderQuestionnaireChrome();
     setupMobileNavigation();
     setupScrollState();
+    setupTestimonialCarousel();
     setupRevealAnimations();
     setupQuestionnaireTriggers();
     setupQuestionnaireNavigation();
