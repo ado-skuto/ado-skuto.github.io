@@ -196,6 +196,15 @@
       .join("");
   }
 
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   function getOfferImage(offer, index) {
     if (typeof offer.image === "string") {
       return {
@@ -247,6 +256,12 @@
 
     dom.testimonialsList.classList.remove("card-grid", "card-grid--quotes");
     dom.testimonialsList.classList.add("testimonial-carousel");
+
+    const screenshotTestimonials = Array.isArray(window.TESTIMONIAL_SCREENSHOTS)
+      ? window.TESTIMONIAL_SCREENSHOTS
+      : [];
+    const testimonials = screenshotTestimonials.length ? screenshotTestimonials : config.testimonials;
+
     dom.testimonialsList.innerHTML = `
       <button
         class="testimonial-carousel__button"
@@ -257,18 +272,35 @@
         ‹
       </button>
       <div class="testimonial-carousel__track" data-testimonial-track>
-        ${config.testimonials
+        ${testimonials
           .map(
-            (item, index) => `
-          <blockquote
-            class="quote-card ${index === 0 ? "is-active" : index === 1 ? "is-next" : index === config.testimonials.length - 1 ? "is-prev" : "is-hidden"}"
+            (item, index) => {
+              const stateClass =
+                index === 0 ? "is-active" : index === 1 ? "is-next" : index === testimonials.length - 1 ? "is-prev" : "is-hidden";
+
+              if (item && item.src) {
+                return `
+          <figure
+            class="quote-card quote-card--image ${stateClass}"
             data-testimonial-index="${index}"
           >
-            <p>“${item.quote}”</p>
-            <footer>${item.author}</footer>
+            <img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.alt || "Screenshot referencie od klienta")}" loading="lazy">
+            <span class="quote-card__overlay">Výsledok z praxe</span>
+          </figure>
+        `;
+              }
+
+              return `
+          <blockquote
+            class="quote-card ${stateClass}"
+            data-testimonial-index="${index}"
+          >
+            <p>“${escapeHtml(item.quote)}”</p>
+            <footer>${escapeHtml(item.author)}</footer>
             <span class="quote-card__overlay">Výsledok z praxe</span>
           </blockquote>
-        `
+        `;
+            }
           )
           .join("")}
       </div>

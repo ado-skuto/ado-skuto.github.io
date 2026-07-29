@@ -37,7 +37,7 @@ window.SITE_CONFIG = {
     secondaryCta: { label: "Pozrieť možnosti spolupráce", href: "#offers" },
     // Replace with a real image in assets/images/ and update alt text here.
     image: {
-      src: "assets/images/coach-hero-placeholder.svg",
+      src: "assets/images/coach-hero.jpg",
       alt: "Portrét osobného trénera v štúdiu"
     }
   },
