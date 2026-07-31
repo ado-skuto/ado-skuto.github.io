@@ -256,8 +256,9 @@ button {
   top: 0;
   z-index: 30;
   backdrop-filter: blur(14px);
-  background: rgb(241 233 220 / 82%);
-  border-bottom: 1px solid transparent;
+  background: rgb(241 233 220 / 92%);
+  border-bottom: 1px solid rgb(217 208 195 / 84%);
+  box-shadow: 0 10px 28px rgb(16 42 67 / 7%);
   transition:
     border-color var(--transition-base),
     box-shadow var(--transition-base),
@@ -429,6 +430,7 @@ button {
   position: absolute;
   inset: 9% 2% 7% 8%;
   background: var(--color-camel);
+  box-shadow: 0 28px 70px rgb(16 42 67 / 10%);
   clip-path: polygon(10% 8%, 82% 0, 100% 28%, 92% 92%, 28% 100%, 0 78%, 4% 28%);
   opacity: 0.48;
   z-index: -2;
@@ -713,7 +715,7 @@ button {
   width: 100%;
   max-height: 420px;
   object-fit: contain;
-  border-radius: var(--radius-card);
+  border-radius: 0;
 }
 
 .content-section__media img + img {
@@ -926,7 +928,7 @@ button {
   width: 100%;
   max-height: 340px;
   object-fit: contain;
-  border-radius: calc(var(--radius-card) - 8px);
+  border-radius: 0;
   background: #F7F2EC;
 }
 
