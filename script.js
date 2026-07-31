@@ -15,6 +15,7 @@
     heroImage: document.querySelector("[data-hero-image]"),
     offersList: document.querySelector("[data-offers-list]"),
     contentSectionSlots: document.querySelectorAll("[data-content-sections]"),
+    finalCta: document.querySelector("[data-final-cta]"),
     testimonialsList: document.querySelector("[data-testimonials-list]"),
     footerContent: document.querySelector("[data-footer-content]"),
     modal: document.querySelector("[data-form-modal]"),
@@ -150,7 +151,7 @@
     content.querySelector(".section-kicker").textContent = config.hero.kicker;
     content.querySelector("h1").textContent = config.hero.headline;
     content.querySelector(".hero__lead").textContent = config.hero.subheadline;
-    actionWrap.innerHTML = `<a class="button button--ghost" href="${config.hero.secondaryCta.href}">${config.hero.secondaryCta.label}</a>`;
+    actionWrap.innerHTML = "";
     updateImage(dom.heroImage, config.hero.image);
   }
 
@@ -525,6 +526,32 @@
     if (currentYearNode) {
       currentYearNode.textContent = String(new Date().getFullYear());
     }
+  }
+
+  function renderFinalCta() {
+    if (!dom.finalCta || !config.finalCta) {
+      return;
+    }
+
+    dom.finalCta.innerHTML = `
+      <div class="container final-cta__inner reveal" data-reveal>
+        <p class="section-kicker">${escapeHtml(config.finalCta.kicker)}</p>
+        <h2>${renderFinalCtaTitle(config.finalCta.title)}</h2>
+        <a class="button button--primary final-cta__button" href="${escapeHtml(config.finalCta.href)}">
+          ${escapeHtml(config.finalCta.label)}
+        </a>
+      </div>
+    `;
+  }
+
+  function renderFinalCtaTitle(title) {
+    const parts = String(title || "").split(" zadarmo");
+
+    if (parts.length < 2) {
+      return escapeHtml(title);
+    }
+
+    return `${escapeHtml(parts[0])}<br>zadarmo`;
   }
 
   function getIconMarkup(icon) {
@@ -1649,6 +1676,7 @@
     renderOffers();
     renderContentSections();
     renderTestimonials();
+    renderFinalCta();
     renderFooter();
     renderQuestionnaireChrome();
     setupMobileNavigation();

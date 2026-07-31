@@ -5,7 +5,7 @@ window.SITE_CONFIG = {
     eyebrow: "Osobný tréner",
     pageTitle: "Aďo Škuťo - Osobný tréner",
     metaDescription:
-      "Osobný tréner pre ľudí, ktorí chcú výsledky, nie výhovorky. Praktický tréningový systém, jasný plán a dlhodobé vedenie.",
+      "Osobný tréner, ktorý pomáha ľuďom budovať silu a svaly jednoducho bez zbytočného blúdenia v posilke.",
     ogImage: "assets/images/coach-hero-placeholder.svg",
     language: "sk"
   },
@@ -26,6 +26,13 @@ window.SITE_CONFIG = {
   testimonialsSection: {
     kicker: "Referencie",
     title: "Skúsenosti klientov"
+  },
+
+  finalCta: {
+    kicker: "Začni spoluprácu",
+    title: "Neváhaj, prvý tréning máš odo mňa zadarmo",
+    label: "Späť na služby",
+    href: "#offers"
   },
 
   // Move section ids between these arrays to change their position on the page.
@@ -94,9 +101,9 @@ window.SITE_CONFIG = {
 
   hero: {
     kicker: "Prémiový osobný coaching",
-    headline: "Osobný tréner pre ľudí, ktorí chcú výsledky, nie výhovorky",
+    headline: "Pomôžem budovať silu a svaly jednoducho bez zbytočného blúdenia v posilke",
     subheadline:
-      "Jednoduchý tréningový systém, jasný plán a vedenie, ktoré ťa udrží v pohybe.",
+      "Prvý tréning máš odo mňa zadarmo (Kysucké Nové Mesto).",
     secondaryCta: { label: "Pozrieť možnosti spolupráce", href: "#offers" },
     // Replace with a real image in assets/images/ and update alt text here.
     image: {
