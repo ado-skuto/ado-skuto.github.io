@@ -14,6 +14,7 @@
     heroSection: document.querySelector('[data-section="hero"]'),
     heroImage: document.querySelector("[data-hero-image]"),
     offersList: document.querySelector("[data-offers-list]"),
+    contentSectionSlots: document.querySelectorAll("[data-content-sections]"),
     testimonialsList: document.querySelector("[data-testimonials-list]"),
     footerContent: document.querySelector("[data-footer-content]"),
     modal: document.querySelector("[data-form-modal]"),
@@ -194,6 +195,91 @@
         }
       )
       .join("");
+  }
+
+  function getContentSectionsForSlot(slotName) {
+    const placement = config.contentSectionPlacement || {};
+    const sectionIds = Array.isArray(placement[slotName]) ? placement[slotName] : [];
+    const sections = Array.isArray(config.contentSections) ? config.contentSections : [];
+    const sectionsById = new Map(sections.map((section) => [section.id, section]));
+
+    return sectionIds.map((sectionId) => sectionsById.get(sectionId)).filter(Boolean);
+  }
+
+  function renderContentSections() {
+    if (!dom.contentSectionSlots.length) {
+      return;
+    }
+
+    dom.contentSectionSlots.forEach((slot) => {
+      const slotName = slot.getAttribute("data-content-sections");
+      const sections = getContentSectionsForSlot(slotName);
+
+      slot.innerHTML = sections
+        .map((section) => {
+          const image = section.image || {};
+
+          return `
+        <section class="content-section section" id="${escapeHtml(section.id)}" data-section="${escapeHtml(section.id)}">
+          <div class="container content-section__inner">
+            <div class="content-section__media reveal" data-reveal>
+              <img src="${escapeHtml(image.src || "")}" alt="${escapeHtml(image.alt || "")}" loading="lazy">
+            </div>
+            <div class="content-section__copy reveal" data-reveal>
+              <p class="section-kicker">${escapeHtml(section.kicker)}</p>
+              <h2>${escapeHtml(section.title)}</h2>
+              ${renderParagraphs(section.intro)}
+              <div class="content-expand" data-content-expand>
+                <div class="content-expand__body" data-content-expand-body>
+                  ${renderParagraphs(section.expanded)}
+                </div>
+                <button
+                  class="content-expand__button"
+                  type="button"
+                  data-content-expand-toggle
+                  data-expand-label="${escapeHtml(section.expandLabel || "Čítať viac")}"
+                  data-collapse-label="${escapeHtml(section.collapseLabel || "Zobraziť menej")}"
+                >
+                  ${escapeHtml(section.expandLabel || "Čítať viac")}
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+        })
+        .join("");
+    });
+  }
+
+  function renderParagraphs(value) {
+    const paragraphs = Array.isArray(value) ? value : [value];
+
+    return paragraphs
+      .filter((paragraph) => paragraph)
+      .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
+      .join("");
+  }
+
+  function setupContentExpands() {
+    document.querySelectorAll("[data-content-expand]").forEach((expand) => {
+      const button = expand.querySelector("[data-content-expand-toggle]");
+
+      if (!button) {
+        return;
+      }
+
+      button.addEventListener("click", () => {
+        const isOpen = expand.classList.toggle("is-open");
+        const expandLabel = button.getAttribute("data-expand-label") || "Čítať viac";
+        const collapseLabel = button.getAttribute("data-collapse-label") || "Zobraziť menej";
+
+        button.textContent = isOpen ? collapseLabel : expandLabel;
+        button.setAttribute("aria-expanded", String(isOpen));
+      });
+
+      button.setAttribute("aria-expanded", "false");
+    });
   }
 
   function escapeHtml(value) {
@@ -1537,12 +1623,14 @@
     renderNavigation();
     renderHero();
     renderOffers();
+    renderContentSections();
     renderTestimonials();
     renderFooter();
     renderQuestionnaireChrome();
     setupMobileNavigation();
     setupScrollState();
     setupBackgroundMotion();
+    setupContentExpands();
     setupTestimonialCarousel();
     setupRevealAnimations();
     setupQuestionnaireTriggers();

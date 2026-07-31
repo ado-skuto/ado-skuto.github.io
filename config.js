@@ -29,6 +29,70 @@ window.SITE_CONFIG = {
     title: "Skúsenosti klientov"
   },
 
+  // Move section ids between these arrays to change their position on the page.
+  contentSectionPlacement: {
+    afterOffers: ["is-it-for-you"],
+    afterTestimonials: ["about-me", "how-i-work"]
+  },
+
+  contentSections: [
+    {
+      id: "is-it-for-you",
+      kicker: "Je to pre teba?",
+      title: "Možno len potrebuješ jasný smer",
+      image: {
+        src: "assets/images/form-step-goal-placeholder.svg",
+        alt: "Jednoduchá tréningová ilustrácia"
+      },
+      intro: [
+        "Niekedy je to únava. Inokedy len pocit, že telo už nie je také, aké bývalo a nevieš presne prečo. Inokedy si zahltený príliš veľa informáciami a nemáš jasný plán.",
+        "Možno si skúšal cvičiť sám, no zatiaľ si nenašiel spôsob, ktorý naozaj sedí tebe. Alebo nevieš, čo funguje a nechceš strácať čas. A to je v poriadku. Každý niekde začínal, aj ja."
+      ],
+      expanded: [
+        "Predstav si o pár mesiacov seba, silnejšieho, s väčšou energiou, niekoho, kto sa ráno pozrie do zrkadla a je spokojný s tým, čo vidí. Niekoho, kto nemusí premýšľať, či zvládne schody, kto sa cíti dobre vo vlastnej koži.",
+        "To nie je len predstava. Je to len otázka konzistencie a robenia vecí, ktoré fungujú.",
+        "Robím to preto, že ma teší, keď vidím ľudí napredovať. Nič mi neurobí väčšiu radosť, ako keď za mnou niekto príde a povie, že sa cíti lepšie, silnejšie, sebavedomejšie, že mu moja rada pomohla a že sa nevie dočkať ďalšieho tréningu. Presne to je dôvod, prečo to robím.",
+        "Klienti mi hovoria to isté: viac energie, lepšia pohyblivosť, menej bolesti a pocit, že sa konečne cítia dobre vo vlastnom tele. Nie preto, že by mali niečo výnimočné, ale preto, že mali niekoho, kto ich viedol správnym smerom, bol s nimi a dal im jednoduchý systém, ktorého sa držia.",
+        "Ak sa nerozhodneš pre spoluprácu so mnou, nič sa nestane. Ale vrelo ti cvičenie odporúčam, nie kvôli mne, nie len kvôli tomu, aby si vyzeral dobre, ale aby si sa cítil lepšie a bol zdravý a spokojný. Telo samo od seba lepšie nebude, len ak preň niečo urobíš. A to sa oplatí nielen tebe, ale aj ľuďom okolo teba, ktorí ťa chcú mať pri sebe zdravého a silného čo najdlhšie."
+      ],
+      expandLabel: "Čítať viac"
+    },
+    {
+      id: "about-me",
+      kicker: "O mne",
+      title: "Som Aďo, osobný tréner z Kysúc",
+      image: {
+        src: "assets/images/coach-about-placeholder.svg",
+        alt: "Portrét trénera"
+      },
+      intro:
+        "Som Aďo — certifikovaný osobný tréner z Kysuckého Nového Mesta.",
+      expanded: [
+        "Prešiel som si pár súťažami a naposledy som sa pripravil na Majstrovstvá Slovenska v kulturistike, kde som síce neuspel, ale získal som veľa hodnotných skúseností.",
+        "Cvičeniu sa venujem už cez 10 rokov. Vždy som sa snažil hľadať najefektívnejší spôsob cvičenia, aby som všetok čas a úsilie dával do vecí, ktoré majú zmysel.",
+        "Odkedy cvičím, vyskúšal som na sebe veľa vecí a učím tie, ktoré sú vedecky podložené a naozaj mi fungovali."
+      ],
+      expandLabel: "Čítať viac"
+    },
+    {
+      id: "how-i-work",
+      kicker: "Ako pracujem",
+      title: "Plán nastavím podľa teba",
+      image: {
+        src: "assets/images/form-step-details-placeholder.svg",
+        alt: "Ilustrácia tréningového plánovania"
+      },
+      intro:
+        "Ak si môj klient, dostaneš plán prispôsobený tebe na mieru, cviky, ktoré ti sedia a sú zamerané na tvoje silné aj slabé stránky, s dôrazom na to, čo chceš zlepšiť.",
+      expanded: [
+        "Na tréningu ťa naučím správnu techniku, budem kontrolovať, že cvičíš bezpečne a efektívne, s postupným upravovaním podľa miery tvojho progresu.",
+        "A budem pri tom, aby si to nevzdal po dvoch týždňoch ako väčšina ľudí, čo to skúša sama.",
+        "Nezáleží na veku ani na tom, kde práve si, či chceš schudnúť, nabrať svaly, alebo sa jednoducho cítiť lepšie vo vlastnom tele. Poď so mnou do toho."
+      ],
+      expandLabel: "Čítať viac"
+    }
+  ],
+
   hero: {
     kicker: "Prémiový osobný coaching",
     headline: "Osobný tréner pre ľudí, ktorí chcú výsledky, nie výhovorky",
