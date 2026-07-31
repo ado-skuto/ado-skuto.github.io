@@ -556,6 +556,8 @@ button {
   border-radius: var(--radius-card);
   background: var(--service-surface, var(--color-surface));
   box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transform-origin: bottom center;
   transition:
     transform var(--transition-base),
     box-shadow var(--transition-base),
@@ -572,10 +574,12 @@ button {
 }
 
 .info-card:hover,
-.info-card:focus-within {
-  transform: translateY(-4px);
-  border-color: rgb(86 124 157 / 48%);
-  box-shadow: 0 18px 36px rgb(16 42 67 / 14%);
+.info-card:focus-within,
+.info-card.is-visible:hover,
+.info-card.is-visible:focus-within {
+  transform: translateY(-8px) scale(1.028);
+  border-color: rgb(86 124 157 / 72%);
+  box-shadow: 0 24px 44px rgb(16 42 67 / 18%);
 }
 
 .info-card::before {
@@ -643,6 +647,22 @@ button {
 .info-card p {
   margin: var(--space-2) 0 var(--space-3);
   color: var(--color-text-muted);
+}
+
+.info-card__list {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 var(--space-3);
+  padding-left: 18px;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.info-card__price {
+  margin-top: var(--space-2);
+  color: var(--color-navy);
+  font-weight: 800;
 }
 
 .info-card .button {

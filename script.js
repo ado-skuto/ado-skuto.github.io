@@ -175,18 +175,24 @@
           const image = getOfferImage(offer, index);
 
           return `
-          <article class="info-card reveal" data-reveal>
+          <article
+            class="info-card reveal"
+            data-reveal
+            data-service-card="${offer.id}"
+            ${offer.disabled ? 'aria-disabled="true"' : ""}
+          >
             <div class="info-card__visual" aria-hidden="true">
               <img src="${image.src}" alt="" width="320" height="240" loading="lazy">
             </div>
             <div class="info-card__body">
               <h3>${offer.title}</h3>
               <p>${offer.description}</p>
+              ${renderOfferBullets(offer.bullets)}
+              ${offer.price ? `<p class="info-card__price">${escapeHtml(offer.price)}</p>` : ""}
             </div>
             <button
               class="button button--ghost"
               type="button"
-              data-service-trigger="${offer.id}"
               ${offer.disabled ? "disabled" : ""}
             >
               ${offer.ctaLabel || config.questionnaire.triggerLabelFallback}
@@ -196,6 +202,18 @@
         }
       )
       .join("");
+  }
+
+  function renderOfferBullets(bullets) {
+    if (!Array.isArray(bullets) || !bullets.length) {
+      return "";
+    }
+
+    return `
+      <ul class="info-card__list">
+        ${bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}
+      </ul>
+    `;
   }
 
   function getContentSectionsForSlot(slotName) {
@@ -684,10 +702,21 @@
 
   function setupQuestionnaireTriggers() {
     const triggers = document.querySelectorAll("[data-service-trigger]");
+    const cards = document.querySelectorAll("[data-service-card]");
 
     triggers.forEach((trigger) => {
       trigger.addEventListener("click", () => {
         openQuestionnaire(trigger.getAttribute("data-service-trigger") || "");
+      });
+    });
+
+    cards.forEach((card) => {
+      card.addEventListener("click", () => {
+        if (card.getAttribute("aria-disabled") === "true") {
+          return;
+        }
+
+        openQuestionnaire(card.getAttribute("data-service-card") || "");
       });
     });
   }

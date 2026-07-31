@@ -118,7 +118,13 @@ window.SITE_CONFIG = {
       id: "personal-training",
       title: "Osobný tréning",
       description:
-        "Tréning naživo s technikou, plánom a jasným postupom podľa tvojej úrovne.",
+        "Prebieha v Riecky Fitness KNM. Pre teba, ak chceš niekoho vedľa seba, kto ťa opraví, podrží a nakopne.",
+      bullets: [
+        "Tréning šitý na mieru tvojmu telu a cieľom",
+        "Kontrola techniky naživo",
+        "Motivácia a podpora, keď to najviac potrebuješ"
+      ],
+      price: "Cena: dohodneme na konzultácii",
       ctaLabel: "Zistiť viac",
       flow: "personalTraining"
     },
@@ -126,7 +132,15 @@ window.SITE_CONFIG = {
       id: "online-coaching",
       title: "Online coaching",
       description:
-        "Vedenie na diaľku, tréningový plán, kontrola progresu a pravidelná spätná väzba.",
+        "Pre teba, ak chceš plán a podporu, ale tréning zvládneš sám.",
+      bullets: [
+        "Tréningový plán prispôsobený tvojmu progresu",
+        "Priebežné úpravy podľa toho, ako napredujeme",
+        "Video spätná väzba na tvoju techniku",
+        "Konzultácie cez WhatsApp, pýtaj sa kedykoľvek",
+        "Základné odporúčania k stravovaniu a suplementom"
+      ],
+      price: "Cena: 99 € / mesiac",
       ctaLabel: "Zistiť viac",
       flow: "onlineCoaching"
     },
@@ -134,7 +148,15 @@ window.SITE_CONFIG = {
       id: "training-plan",
       title: "Zostavenie tréningového plánu",
       description:
-        "Individuálny tréningový plán postavený podľa tvojho cieľa, režimu a aktuálnej úrovne.",
+        "Pre teba, ak cvičíš sám a potrebuješ efektívny plán šitý na mieru tvojim cieľom.",
+      bullets: [
+        "Kompletný tréningový plán prispôsobený tebe",
+        "Voľba cvikov podľa tvojich preferencií a možností",
+        "Štruktúra na niekoľko týždňov dopredu",
+        "Jasný spôsob progresovania",
+        "2-týždňová podpora, ak budeš chcieť niečo zmeniť alebo upraviť"
+      ],
+      price: "Cena: 49 € / jednorazovo",
       ctaLabel: "Zistiť viac",
       flow: "trainingPlan"
     }
