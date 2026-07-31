@@ -14,6 +14,8 @@
     heroSection: document.querySelector('[data-section="hero"]'),
     heroImage: document.querySelector("[data-hero-image]"),
     offersList: document.querySelector("[data-offers-list]"),
+    contentSectionSlots: document.querySelectorAll("[data-content-sections]"),
+    finalCta: document.querySelector("[data-final-cta]"),
     testimonialsList: document.querySelector("[data-testimonials-list]"),
     footerContent: document.querySelector("[data-footer-content]"),
     modal: document.querySelector("[data-form-modal]"),
@@ -89,6 +91,10 @@
   }
 
   function resetInitialScroll() {
+    if (window.location.hash) {
+      return;
+    }
+
     if ("scrollRestoration" in window.history) {
       window.history.scrollRestoration = "manual";
     }
@@ -145,7 +151,7 @@
     content.querySelector(".section-kicker").textContent = config.hero.kicker;
     content.querySelector("h1").textContent = config.hero.headline;
     content.querySelector(".hero__lead").textContent = config.hero.subheadline;
-    actionWrap.innerHTML = `<a class="button button--ghost" href="${config.hero.secondaryCta.href}">${config.hero.secondaryCta.label}</a>`;
+    actionWrap.innerHTML = "";
     updateImage(dom.heroImage, config.hero.image);
   }
 
@@ -165,22 +171,197 @@
 
     dom.offersList.innerHTML = config.offers
       .map(
-        (offer) => `
-          <article class="info-card reveal" data-reveal>
-            <h3>${offer.title}</h3>
-            <p>${offer.description}</p>
+        (offer, index) => {
+          const image = getOfferImage(offer, index);
+
+          return `
+          <article
+            class="info-card reveal"
+            data-reveal
+            data-service-card="${offer.id}"
+            ${offer.disabled ? 'aria-disabled="true"' : ""}
+          >
+            <div class="info-card__visual" aria-hidden="true">
+              <img src="${image.src}" alt="" width="320" height="240" loading="lazy">
+            </div>
+            <div class="info-card__body">
+              <h3>${offer.title}</h3>
+              <p>${offer.description}</p>
+              ${renderOfferBullets(offer.bullets)}
+              ${offer.price ? `<p class="info-card__price">${escapeHtml(offer.price)}</p>` : ""}
+            </div>
             <button
               class="button button--ghost"
               type="button"
-              data-service-trigger="${offer.id}"
               ${offer.disabled ? "disabled" : ""}
             >
               ${offer.ctaLabel || config.questionnaire.triggerLabelFallback}
             </button>
           </article>
-        `
+        `;
+        }
       )
       .join("");
+  }
+
+  function renderOfferBullets(bullets) {
+    if (!Array.isArray(bullets) || !bullets.length) {
+      return "";
+    }
+
+    return `
+      <ul class="info-card__list">
+        ${bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}
+      </ul>
+    `;
+  }
+
+  function getContentSectionsForSlot(slotName) {
+    const placement = config.contentSectionPlacement || {};
+    const sectionIds = Array.isArray(placement[slotName]) ? placement[slotName] : [];
+    const sections = Array.isArray(config.contentSections) ? config.contentSections : [];
+    const sectionsById = new Map(sections.map((section) => [section.id, section]));
+
+    return sectionIds.map((sectionId) => sectionsById.get(sectionId)).filter(Boolean);
+  }
+
+  function renderContentSections() {
+    if (!dom.contentSectionSlots.length) {
+      return;
+    }
+
+    dom.contentSectionSlots.forEach((slot) => {
+      const slotName = slot.getAttribute("data-content-sections");
+      const sections = getContentSectionsForSlot(slotName);
+
+      slot.innerHTML = sections
+        .map((section) => {
+          return `
+        <section class="content-section section" id="${escapeHtml(section.id)}" data-section="${escapeHtml(section.id)}" data-content-expand-section>
+          <div class="container content-section__inner">
+            <div class="content-section__clip reveal" data-reveal data-content-expand>
+              ${renderContentSectionImages(section)}
+              <div class="content-section__copy">
+                <p class="section-kicker">${escapeHtml(section.kicker)}</p>
+                <h2>${escapeHtml(section.title)}</h2>
+                ${renderParagraphs(section.intro)}
+                <div class="content-expand__body" data-content-expand-body>
+                  ${renderParagraphs(section.expanded)}
+                </div>
+              </div>
+            </div>
+            <button
+              class="content-expand__button"
+              type="button"
+              data-content-expand-toggle
+              data-expand-label="${escapeHtml(section.expandLabel || "Čítať viac")}"
+              data-collapse-label="${escapeHtml(section.collapseLabel || "Zobraziť menej")}"
+            >
+              <span>${escapeHtml(section.expandLabel || "Čítať viac")}</span>
+            </button>
+          </div>
+        </section>
+      `;
+        })
+        .join("");
+    });
+  }
+
+  function renderParagraphs(value) {
+    const paragraphs = Array.isArray(value) ? value : [value];
+
+    return paragraphs
+      .filter((paragraph) => paragraph)
+      .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
+      .join("");
+  }
+
+  function renderContentSectionImages(section) {
+    const images = Array.isArray(section.images) && section.images.length
+      ? section.images
+      : [section.image].filter(Boolean);
+
+    if (!images.length) {
+      return "";
+    }
+
+    return `
+      <figure class="content-section__media">
+        ${images
+          .map(
+            (image) => `
+          <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt || "")}" loading="lazy">
+        `
+          )
+          .join("")}
+      </figure>
+    `;
+  }
+
+  function setupContentExpands() {
+    document.querySelectorAll("[data-content-expand-section]").forEach((section) => {
+      const expand = section.querySelector("[data-content-expand]");
+      const button = section.querySelector("[data-content-expand-toggle]");
+
+      if (!expand || !button) {
+        return;
+      }
+
+      button.addEventListener("click", () => {
+        const isOpen = section.classList.toggle("is-open");
+        const expandLabel = button.getAttribute("data-expand-label") || "Čítať viac";
+        const collapseLabel = button.getAttribute("data-collapse-label") || "Zobraziť menej";
+
+        const label = button.querySelector("span");
+
+        if (label) {
+          label.textContent = isOpen ? collapseLabel : expandLabel;
+        }
+
+        button.setAttribute("aria-expanded", String(isOpen));
+      });
+
+      button.setAttribute("aria-expanded", "false");
+    });
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function getOfferImage(offer, index) {
+    if (typeof offer.image === "string") {
+      return {
+        src: offer.image,
+        alt: ""
+      };
+    }
+
+    if (offer.image) {
+      return offer.image;
+    }
+
+    const fallbackImages = [
+      {
+        src: "assets/images/form-step-coach-placeholder.svg",
+        alt: ""
+      },
+      {
+        src: "assets/images/form-step-goal-placeholder.svg",
+        alt: ""
+      },
+      {
+        src: "assets/images/form-step-details-placeholder.svg",
+        alt: ""
+      }
+    ];
+
+    return fallbackImages[index % fallbackImages.length];
   }
 
   function renderTestimonials() {
@@ -202,16 +383,122 @@
       }
     }
 
-    dom.testimonialsList.innerHTML = config.testimonials
-      .map(
-        (item) => `
-          <blockquote class="quote-card reveal" data-reveal>
-            <p>“${item.quote}”</p>
-            <footer>${item.author}</footer>
+    dom.testimonialsList.classList.remove("card-grid", "card-grid--quotes");
+    dom.testimonialsList.classList.add("testimonial-carousel");
+
+    const screenshotTestimonials = Array.isArray(window.TESTIMONIAL_SCREENSHOTS)
+      ? window.TESTIMONIAL_SCREENSHOTS
+      : [];
+    const testimonials = screenshotTestimonials.length ? screenshotTestimonials : config.testimonials;
+
+    dom.testimonialsList.innerHTML = `
+      <button
+        class="testimonial-carousel__button"
+        type="button"
+        aria-label="Predchádzajúca referencia"
+        data-testimonial-prev
+      >
+        ‹
+      </button>
+      <div class="testimonial-carousel__track" data-testimonial-track>
+        ${testimonials
+          .map(
+            (item, index) => {
+              const stateClass =
+                index === 0 ? "is-active" : index === 1 ? "is-next" : index === testimonials.length - 1 ? "is-prev" : "is-hidden";
+
+              if (item && item.src) {
+                return `
+          <figure
+            class="quote-card quote-card--image ${stateClass}"
+            data-testimonial-index="${index}"
+          >
+            <img src="${escapeHtml(item.src)}" alt="${escapeHtml(item.alt || "Screenshot referencie od klienta")}" loading="lazy">
+            <span class="quote-card__overlay">Výsledok z praxe</span>
+          </figure>
+        `;
+              }
+
+              return `
+          <blockquote
+            class="quote-card ${stateClass}"
+            data-testimonial-index="${index}"
+          >
+            <p>“${escapeHtml(item.quote)}”</p>
+            <footer>${escapeHtml(item.author)}</footer>
+            <span class="quote-card__overlay">Výsledok z praxe</span>
           </blockquote>
-        `
-      )
-      .join("");
+        `;
+            }
+          )
+          .join("")}
+      </div>
+      <button
+        class="testimonial-carousel__button"
+        type="button"
+        aria-label="Nasledujúca referencia"
+        data-testimonial-next
+      >
+        ›
+      </button>
+    `;
+  }
+
+  function setupTestimonialCarousel() {
+    if (!dom.testimonialsList) {
+      return;
+    }
+
+    const cards = Array.from(dom.testimonialsList.querySelectorAll("[data-testimonial-index]"));
+    const prevButton = dom.testimonialsList.querySelector("[data-testimonial-prev]");
+    const nextButton = dom.testimonialsList.querySelector("[data-testimonial-next]");
+    let activeIndex = 0;
+
+    if (!cards.length) {
+      return;
+    }
+
+    const updateCarousel = (nextIndex) => {
+      activeIndex = (nextIndex + cards.length) % cards.length;
+      const previousIndex = (activeIndex - 1 + cards.length) % cards.length;
+      const nextVisibleIndex = (activeIndex + 1) % cards.length;
+
+      cards.forEach((card, index) => {
+        card.classList.toggle("is-active", index === activeIndex);
+        card.classList.toggle("is-prev", index === previousIndex);
+        card.classList.toggle("is-next", index === nextVisibleIndex);
+        card.classList.toggle(
+          "is-hidden",
+          index !== activeIndex && index !== previousIndex && index !== nextVisibleIndex
+        );
+
+        if (card instanceof HTMLElement) {
+          card.tabIndex = index === activeIndex || index === previousIndex || index === nextVisibleIndex ? 0 : -1;
+        }
+      });
+    };
+
+    prevButton && prevButton.addEventListener("click", () => updateCarousel(activeIndex - 1));
+    nextButton && nextButton.addEventListener("click", () => updateCarousel(activeIndex + 1));
+
+    cards.forEach((card) => {
+      card.addEventListener("click", () => {
+        const index = Number(card.getAttribute("data-testimonial-index") || "0");
+        updateCarousel(index);
+      });
+
+      card.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") {
+          return;
+        }
+
+        event.preventDefault();
+        const index = Number(card.getAttribute("data-testimonial-index") || "0");
+        updateCarousel(index);
+      });
+    });
+
+    updateCarousel(activeIndex);
   }
 
   function renderFooter() {
@@ -257,6 +544,32 @@
     if (currentYearNode) {
       currentYearNode.textContent = String(new Date().getFullYear());
     }
+  }
+
+  function renderFinalCta() {
+    if (!dom.finalCta || !config.finalCta) {
+      return;
+    }
+
+    dom.finalCta.innerHTML = `
+      <div class="container final-cta__inner reveal" data-reveal>
+        <p class="section-kicker">${escapeHtml(config.finalCta.kicker)}</p>
+        <h2>${renderFinalCtaTitle(config.finalCta.title)}</h2>
+        <a class="button button--primary final-cta__button" href="${escapeHtml(config.finalCta.href)}">
+          ${escapeHtml(config.finalCta.label)}
+        </a>
+      </div>
+    `;
+  }
+
+  function renderFinalCtaTitle(title) {
+    const parts = String(title || "").split(" zadarmo");
+
+    if (parts.length < 2) {
+      return escapeHtml(title);
+    }
+
+    return `${escapeHtml(parts[0])}<br>zadarmo`;
   }
 
   function getIconMarkup(icon) {
@@ -336,6 +649,34 @@
     window.addEventListener("scroll", toggleHeaderState, { passive: true });
   }
 
+  function setupBackgroundMotion() {
+    // Drives only the decorative background rules in styles.css.
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    if (prefersReducedMotion.matches) {
+      return;
+    }
+
+    let isQueued = false;
+
+    const updateBackgroundOffset = () => {
+      document.documentElement.style.setProperty("--background-scroll-y", `${Math.round(window.scrollY)}px`);
+      isQueued = false;
+    };
+
+    const queueBackgroundOffset = () => {
+      if (isQueued) {
+        return;
+      }
+
+      isQueued = true;
+      window.requestAnimationFrame(updateBackgroundOffset);
+    };
+
+    updateBackgroundOffset();
+    window.addEventListener("scroll", queueBackgroundOffset, { passive: true });
+  }
+
   function setupRevealAnimations() {
     const revealItems = document.querySelectorAll("[data-reveal]");
 
@@ -361,10 +702,21 @@
 
   function setupQuestionnaireTriggers() {
     const triggers = document.querySelectorAll("[data-service-trigger]");
+    const cards = document.querySelectorAll("[data-service-card]");
 
     triggers.forEach((trigger) => {
       trigger.addEventListener("click", () => {
         openQuestionnaire(trigger.getAttribute("data-service-trigger") || "");
+      });
+    });
+
+    cards.forEach((card) => {
+      card.addEventListener("click", () => {
+        if (card.getAttribute("aria-disabled") === "true") {
+          return;
+        }
+
+        openQuestionnaire(card.getAttribute("data-service-card") || "");
       });
     });
   }
@@ -1351,11 +1703,16 @@
     renderNavigation();
     renderHero();
     renderOffers();
+    renderContentSections();
     renderTestimonials();
+    renderFinalCta();
     renderFooter();
     renderQuestionnaireChrome();
     setupMobileNavigation();
     setupScrollState();
+    setupBackgroundMotion();
+    setupContentExpands();
+    setupTestimonialCarousel();
     setupRevealAnimations();
     setupQuestionnaireTriggers();
     setupQuestionnaireNavigation();

@@ -2,17 +2,16 @@ window.SITE_CONFIG = {
   // Basic brand and SEO values. Safe to edit.
   brand: {
     coachName: "Aďo Škuťo",
-    eyebrow: "Osobný koučing",
+    eyebrow: "Osobný tréner",
     pageTitle: "Aďo Škuťo - Osobný tréner",
     metaDescription:
-      "Osobný tréner pre ľudí, ktorí chcú výsledky, nie výhovorky. Praktický tréningový systém, jasný plán a dlhodobé vedenie.",
+      "Osobný tréner, ktorý pomáha ľuďom budovať silu a svaly jednoducho bez zbytočného blúdenia v posilke.",
     ogImage: "assets/images/coach-hero-placeholder.svg",
     language: "sk"
   },
 
   contact: {
     email: "ado.skuto.business@gmail.com",
-    phone: "+421 900 000 000",
     socialLinks: [
       { label: "Instagram", href: "https://www.instagram.com/ado_skuto/", icon: "instagram" },
       { label: "YouTube", href: "https://www.youtube.com/@AdoSkuto1", icon: "youtube" }
@@ -29,15 +28,86 @@ window.SITE_CONFIG = {
     title: "Skúsenosti klientov"
   },
 
+  finalCta: {
+    kicker: "Začni spoluprácu",
+    title: "Neváhaj, prvý tréning máš odo mňa zadarmo",
+    label: "Späť na služby",
+    href: "#offers"
+  },
+
+  // Move section ids between these arrays to change their position on the page.
+  contentSectionPlacement: {
+    afterOffers: ["is-it-for-you"],
+    afterTestimonials: ["about-me", "how-i-work"]
+  },
+
+  contentSections: [
+    {
+      id: "is-it-for-you",
+      kicker: "Je to pre teba?",
+      title: "Možno len potrebuješ jasný smer",
+      image: {
+        src: "assets/images/comparison-coach.jpg",
+        alt: "Tréningová fotografia"
+      },
+      intro: [
+        "Niekedy je to únava. Inokedy len pocit, že telo už nie je také, aké bývalo a nevieš presne prečo. Inokedy si zahltený príliš veľa informáciami a nemáš jasný plán.",
+        "Možno si skúšal cvičiť sám, no zatiaľ si nenašiel spôsob, ktorý naozaj sedí tebe. Alebo nevieš, čo funguje a nechceš strácať čas. A to je v poriadku. Každý niekde začínal, aj ja."
+      ],
+      expanded: [
+        "Predstav si o pár mesiacov seba, silnejšieho, s väčšou energiou, niekoho, kto sa ráno pozrie do zrkadla a je spokojný s tým, čo vidí. Niekoho, kto nemusí premýšľať, či zvládne schody, kto sa cíti dobre vo vlastnej koži.",
+        "To nie je len predstava. Je to len otázka konzistencie a robenia vecí, ktoré fungujú.",
+        "Robím to preto, že ma teší, keď vidím ľudí napredovať. Nič mi neurobí väčšiu radosť, ako keď za mnou niekto príde a povie, že sa cíti lepšie, silnejšie, sebavedomejšie, že mu moja rada pomohla a že sa nevie dočkať ďalšieho tréningu. Presne to je dôvod, prečo to robím.",
+        "Klienti mi hovoria to isté: viac energie, lepšia pohyblivosť, menej bolesti a pocit, že sa konečne cítia dobre vo vlastnom tele. Nie preto, že by mali niečo výnimočné, ale preto, že mali niekoho, kto ich viedol správnym smerom, bol s nimi a dal im jednoduchý systém, ktorého sa držia.",
+        "Ak sa nerozhodneš pre spoluprácu so mnou, nič sa nestane. Ale vrelo ti cvičenie odporúčam, nie kvôli mne, nie len kvôli tomu, aby si vyzeral dobre, ale aby si sa cítil lepšie a bol zdravý a spokojný. Telo samo od seba lepšie nebude, len ak preň niečo urobíš. A to sa oplatí nielen tebe, ale aj ľuďom okolo teba, ktorí ťa chcú mať pri sebe zdravého a silného čo najdlhšie."
+      ],
+      expandLabel: "Čítať viac"
+    },
+    {
+      id: "about-me",
+      kicker: "O mne",
+      title: "Som Aďo, osobný tréner z Kysúc",
+      image: {
+        src: "assets/images/form-2.jpg",
+        alt: "Portrét trénera"
+      },
+      intro:
+        "Som Aďo — certifikovaný osobný tréner z Kysuckého Nového Mesta.",
+      expanded: [
+        "Prešiel som si pár súťažami a naposledy som sa pripravil na Majstrovstvá Slovenska v kulturistike, kde som síce neuspel, ale získal som veľa hodnotných skúseností.",
+        "Cvičeniu sa venujem už cez 10 rokov. Vždy som sa snažil hľadať najefektívnejší spôsob cvičenia, aby som všetok čas a úsilie dával do vecí, ktoré majú zmysel.",
+        "Odkedy cvičím, vyskúšal som na sebe veľa vecí a učím tie, ktoré sú vedecky podložené a naozaj mi fungovali."
+      ],
+      expandLabel: "Čítať viac"
+    },
+    {
+      id: "how-i-work",
+      kicker: "Ako pracujem",
+      title: "Plán nastavím podľa teba",
+      image: {
+        src: "assets/images/comparison-coach-2.jpg",
+        alt: "Ilustrácia tréningového plánovania"
+      },
+      intro:
+        "Ak si môj klient, dostaneš plán prispôsobený tebe na mieru, cviky, ktoré ti sedia a sú zamerané na tvoje silné aj slabé stránky, s dôrazom na to, čo chceš zlepšiť.",
+      expanded: [
+        "Na tréningu ťa naučím správnu techniku, budem kontrolovať, že cvičíš bezpečne a efektívne, s postupným upravovaním podľa miery tvojho progresu.",
+        "A budem pri tom, aby si to nevzdal po dvoch týždňoch ako väčšina ľudí, čo to skúša sama.",
+        "Nezáleží na veku ani na tom, kde práve si, či chceš schudnúť, nabrať svaly, alebo sa jednoducho cítiť lepšie vo vlastnom tele. Poď so mnou do toho."
+      ],
+      expandLabel: "Čítať viac"
+    }
+  ],
+
   hero: {
     kicker: "Prémiový osobný coaching",
-    headline: "Osobný tréner pre ľudí, ktorí chcú výsledky, nie výhovorky",
+    headline: "Pomôžem budovať silu a svaly jednoducho bez zbytočného blúdenia v posilke",
     subheadline:
-      "Jednoduchý tréningový systém, jasný plán a vedenie, ktoré ťa udrží v pohybe.",
+      "Prvý tréning máš odo mňa zadarmo (Kysucké Nové Mesto).",
     secondaryCta: { label: "Pozrieť možnosti spolupráce", href: "#offers" },
     // Replace with a real image in assets/images/ and update alt text here.
     image: {
-      src: "assets/images/coach-hero-placeholder.svg",
+      src: "assets/images/coach-hero.jpg",
       alt: "Portrét osobného trénera v štúdiu"
     }
   },
@@ -48,7 +118,13 @@ window.SITE_CONFIG = {
       id: "personal-training",
       title: "Osobný tréning",
       description:
-        "Tréning naživo s technikou, plánom a jasným postupom podľa tvojej úrovne.",
+        "Prebieha v Riecky Fitness KNM. Pre teba, ak chceš niekoho vedľa seba, kto ťa opraví, podrží a nakopne.",
+      bullets: [
+        "Tréning šitý na mieru tvojmu telu a cieľom",
+        "Kontrola techniky naživo",
+        "Motivácia a podpora, keď to najviac potrebuješ"
+      ],
+      price: "Cena: dohodneme na konzultácii",
       ctaLabel: "Zistiť viac",
       flow: "personalTraining"
     },
@@ -56,7 +132,15 @@ window.SITE_CONFIG = {
       id: "online-coaching",
       title: "Online coaching",
       description:
-        "Vedenie na diaľku, tréningový plán, kontrola progresu a pravidelná spätná väzba.",
+        "Pre teba, ak chceš plán a podporu, ale tréning zvládneš sám.",
+      bullets: [
+        "Tréningový plán prispôsobený tvojmu progresu",
+        "Priebežné úpravy podľa toho, ako napredujeme",
+        "Video spätná väzba na tvoju techniku",
+        "Konzultácie cez WhatsApp, pýtaj sa kedykoľvek",
+        "Základné odporúčania k stravovaniu a suplementom"
+      ],
+      price: "Cena: 99 € / mesiac",
       ctaLabel: "Zistiť viac",
       flow: "onlineCoaching"
     },
@@ -64,7 +148,15 @@ window.SITE_CONFIG = {
       id: "training-plan",
       title: "Zostavenie tréningového plánu",
       description:
-        "Individuálny tréningový plán postavený podľa tvojho cieľa, režimu a aktuálnej úrovne.",
+        "Pre teba, ak cvičíš sám a potrebuješ efektívny plán šitý na mieru tvojim cieľom.",
+      bullets: [
+        "Kompletný tréningový plán prispôsobený tebe",
+        "Voľba cvikov podľa tvojich preferencií a možností",
+        "Štruktúra na niekoľko týždňov dopredu",
+        "Jasný spôsob progresovania",
+        "2-týždňová podpora, ak budeš chcieť niečo zmeniť alebo upraviť"
+      ],
+      price: "Cena: 49 € / jednorazovo",
       ctaLabel: "Zistiť viac",
       flow: "trainingPlan"
     }

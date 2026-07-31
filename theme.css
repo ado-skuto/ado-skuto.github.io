@@ -1,65 +1,86 @@
 :root {
-  /* Quick theme switching:
-     Update the values below to change the palette globally.
-     Keep semantic variable names stable so styles.css does not need structural edits. */
-  --color-bg: #f7f2ec;
-  --color-surface: #fffdf9;
-  --color-surface-strong: #f3ebe2;
-  --color-text: #2f241d;
-  --color-muted: #6e6259;
-  --color-primary: #8a6a4f;
-  --color-primary-dark: #6b513c;
-  --color-accent: #6f8faf;
-  --color-accent-dark: #314b63;
-  --color-border: #e5d8ca;
-  --color-success: #2f6b52;
-  --color-error: #9a3d35;
-  --color-overlay: rgba(47, 36, 29, 0.08);
-  --color-shadow: rgba(50, 36, 24, 0.12);
+  --color-bg: #F1E9DC;
+  --color-surface: #FCFAF6;
+  --color-surface-strong: #F7F2EA;
+  --color-navy: #102A43;
+  --color-blue: #567C9D;
+  --color-camel: #B48961;
+  --color-brown: #6A4A34;
+  --color-muted: #D9D0C3;
+  --color-error: #A63D40;
+  --color-success: #2F6B52;
+  --color-text: var(--color-navy);
+  --color-text-muted: #5F6D73;
+  --color-border: var(--color-muted);
+  --color-overlay: rgb(16 42 67 / 45%);
 
-  --font-body: "Manrope", "Segoe UI", sans-serif;
-  --font-heading: "Cormorant Garamond", Georgia, serif;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-ui: "Manrope", "Segoe UI", sans-serif;
+  --font-heading: var(--font-display);
+  --font-body: var(--font-ui);
 
-  --font-size-xs: 0.875rem;
+  --text-xs: 0.78rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.75rem;
+  --text-2xl: clamp(2.25rem, 5vw, 4.75rem);
+  --font-size-xs: var(--text-sm);
   --font-size-sm: 0.95rem;
-  --font-size-base: 1rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: clamp(1.35rem, 3vw, 2rem);
-  --font-size-2xl: clamp(2.5rem, 6vw, 4.8rem);
+  --font-size-base: var(--text-base);
+  --font-size-lg: var(--text-lg);
+  --font-size-xl: var(--text-xl);
+  --font-size-2xl: var(--text-2xl);
 
-  --line-height-tight: 1.05;
-  --line-height-base: 1.65;
+  --line-height-tight: 1.04;
+  --line-height-base: 1.62;
   --line-height-loose: 1.8;
 
-  --space-2xs: 0.25rem;
-  --space-xs: 0.5rem;
-  --space-sm: 0.75rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  --space-2xl: 3rem;
-  --space-3xl: 4.5rem;
-  --space-4xl: 6rem;
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 48px;
+  --space-6: 72px;
+  --space-7: 96px;
+  --space-2xs: 4px;
+  --space-xs: var(--space-1);
+  --space-sm: 12px;
+  --space-md: var(--space-2);
+  --space-lg: var(--space-3);
+  --space-xl: var(--space-4);
+  --space-2xl: var(--space-5);
+  --space-3xl: var(--space-6);
+  --space-4xl: var(--space-7);
 
-  --radius-sm: 0.75rem;
-  --radius-md: 1.25rem;
-  --radius-lg: 2rem;
-  --radius-pill: 999px;
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-modal: 16px;
+  --radius-sm: var(--radius-control);
+  --radius-md: var(--radius-card);
+  --radius-lg: var(--radius-modal);
+  --radius-pill: var(--radius-control);
 
-  --shadow-soft: 0 24px 60px var(--color-shadow);
-  --shadow-card: 0 16px 40px rgba(49, 75, 99, 0.08);
+  --shadow-card: 0 12px 30px rgb(16 42 67 / 10%);
+  --shadow-modal: 0 24px 80px rgb(16 42 67 / 24%);
+  --shadow-soft: var(--shadow-modal);
 
-  --transition-fast: 160ms ease;
-  --transition-base: 260ms ease;
+  --motion-fast: 160ms;
+  --motion-base: 320ms;
+  --motion-slow: 480ms;
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-fast: var(--motion-fast) var(--ease-editorial);
+  --transition-base: var(--motion-base) var(--ease-editorial);
 
-  --container-max: 1180px;
+  --bp-tablet: 900px;
+  --bp-mobile: 640px;
+  --container-max: 1200px;
   --container-narrow: 840px;
-  --section-space: clamp(4.5rem, 8vw, 7rem);
-  --header-height: 5.5rem;
+  --section-space: clamp(72px, 8vw, 112px);
+  --header-height: 80px;
 
-  --button-padding: 0.95rem 1.4rem;
+  --button-padding: 12px 18px;
   --button-border: 1px solid transparent;
-
-  --input-height: 3.4rem;
-  --input-padding: 0.95rem 1rem;
+  --input-height: 52px;
+  --input-padding: 12px 14px;
 }

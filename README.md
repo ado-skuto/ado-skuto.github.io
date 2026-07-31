@@ -71,6 +71,26 @@ Put site images into `assets/images/` and update the matching `src` and `alt` va
 
 The questionnaire also supports per-step images and captions through each step's `media` object in `config.js`.
 
+## Testimonial screenshots
+
+Put real conversation screenshots into `assets/images/testimonials/`.
+
+Supported formats:
+
+- `.jpg`
+- `.jpeg`
+- `.png`
+- `.webp`
+- `.gif`
+
+After adding or removing screenshots, update the static manifest:
+
+```powershell
+.\scripts\update-testimonial-manifest.ps1
+```
+
+When the manifest contains screenshots, the existing testimonial carousel displays them instead of the placeholder text testimonials from `config.js`.
+
 ## Questionnaire
 
 The service cards open a multi-step modal questionnaire.
