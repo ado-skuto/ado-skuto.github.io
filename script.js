@@ -222,9 +222,7 @@
           return `
         <section class="content-section section" id="${escapeHtml(section.id)}" data-section="${escapeHtml(section.id)}">
           <div class="container content-section__inner">
-            <div class="content-section__media reveal" data-reveal>
-              <img src="${escapeHtml(image.src || "")}" alt="${escapeHtml(image.alt || "")}" loading="lazy">
-            </div>
+            ${renderContentSectionImage(image)}
             <div class="content-section__copy reveal" data-reveal>
               <p class="section-kicker">${escapeHtml(section.kicker)}</p>
               <h2>${escapeHtml(section.title)}</h2>
@@ -259,6 +257,18 @@
       .filter((paragraph) => paragraph)
       .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
       .join("");
+  }
+
+  function renderContentSectionImage(image) {
+    if (!image || !image.src) {
+      return "";
+    }
+
+    return `
+      <figure class="content-section__media" data-content-expand-media>
+        <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt || "")}" loading="lazy">
+      </figure>
+    `;
   }
 
   function setupContentExpands() {

@@ -667,6 +667,7 @@ button {
 
 .content-section__media {
   position: relative;
+  min-height: 320px;
 }
 
 .content-section__media::before {
@@ -714,7 +715,6 @@ button {
   position: relative;
   max-height: 72px;
   overflow: hidden;
-  transition: max-height var(--motion-slow) var(--ease-editorial);
 }
 
 .content-expand__body::after {
@@ -730,7 +730,7 @@ button {
 }
 
 .content-expand.is-open .content-expand__body {
-  max-height: 900px;
+  max-height: none;
 }
 
 .content-expand.is-open .content-expand__body::after {
@@ -1502,6 +1502,10 @@ button {
 
   .content-section:nth-of-type(even) .content-section__media {
     order: initial;
+  }
+
+  .content-section__media {
+    min-height: 0;
   }
 
   .content-section__copy h2 {

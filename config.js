@@ -2,7 +2,7 @@ window.SITE_CONFIG = {
   // Basic brand and SEO values. Safe to edit.
   brand: {
     coachName: "Aďo Škuťo",
-    eyebrow: "Osobný koučing",
+    eyebrow: "Osobný tréner",
     pageTitle: "Aďo Škuťo - Osobný tréner",
     metaDescription:
       "Osobný tréner pre ľudí, ktorí chcú výsledky, nie výhovorky. Praktický tréningový systém, jasný plán a dlhodobé vedenie.",
@@ -12,7 +12,6 @@ window.SITE_CONFIG = {
 
   contact: {
     email: "ado.skuto.business@gmail.com",
-    phone: "+421 900 000 000",
     socialLinks: [
       { label: "Instagram", href: "https://www.instagram.com/ado_skuto/", icon: "instagram" },
       { label: "YouTube", href: "https://www.youtube.com/@AdoSkuto1", icon: "youtube" }
@@ -41,8 +40,8 @@ window.SITE_CONFIG = {
       kicker: "Je to pre teba?",
       title: "Možno len potrebuješ jasný smer",
       image: {
-        src: "assets/images/form-step-goal-placeholder.svg",
-        alt: "Jednoduchá tréningová ilustrácia"
+        src: "assets/images/form-1.jpg",
+        alt: "Tréningová fotografia"
       },
       intro: [
         "Niekedy je to únava. Inokedy len pocit, že telo už nie je také, aké bývalo a nevieš presne prečo. Inokedy si zahltený príliš veľa informáciami a nemáš jasný plán.",
@@ -62,7 +61,7 @@ window.SITE_CONFIG = {
       kicker: "O mne",
       title: "Som Aďo, osobný tréner z Kysúc",
       image: {
-        src: "assets/images/coach-about-placeholder.svg",
+        src: "assets/images/form-2.jpg",
         alt: "Portrét trénera"
       },
       intro:
@@ -79,7 +78,7 @@ window.SITE_CONFIG = {
       kicker: "Ako pracujem",
       title: "Plán nastavím podľa teba",
       image: {
-        src: "assets/images/form-step-details-placeholder.svg",
+        src: "assets/images/comparison-coach-2.jpg",
         alt: "Ilustrácia tréningového plánovania"
       },
       intro:
