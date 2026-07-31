@@ -40,7 +40,7 @@ window.SITE_CONFIG = {
       kicker: "Je to pre teba?",
       title: "Možno len potrebuješ jasný smer",
       image: {
-        src: "assets/images/form-1.jpg",
+        src: "assets/images/comparison-coach.jpg",
         alt: "Tréningová fotografia"
       },
       intro: [

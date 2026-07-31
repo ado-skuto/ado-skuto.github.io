@@ -651,13 +651,20 @@ button {
 }
 
 .content-section__inner {
+  display: block;
+}
+
+.content-section__clip {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(240px, 0.78fr) minmax(0, 1fr);
   align-items: start;
   gap: clamp(32px, 6vw, 82px);
+  max-height: 380px;
+  overflow: hidden;
 }
 
-.content-section:nth-of-type(even) .content-section__inner {
+.content-section:nth-of-type(even) .content-section__clip {
   grid-template-columns: minmax(0, 1fr) minmax(240px, 0.78fr);
 }
 
@@ -665,9 +672,32 @@ button {
   order: 2;
 }
 
+.content-section__clip::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 92px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(247 242 236 / 0), var(--content-section-fade-color) 88%);
+  transition: opacity var(--transition-fast);
+}
+
+.content-section.is-open .content-section__clip {
+  max-height: none;
+}
+
+.content-section.is-open .content-section__clip::after {
+  opacity: 0;
+}
+
 .content-section__media {
   position: relative;
   min-height: 320px;
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
 }
 
 .content-section__media::before {
@@ -684,6 +714,10 @@ button {
   max-height: 420px;
   object-fit: contain;
   border-radius: var(--radius-card);
+}
+
+.content-section__media img + img {
+  max-height: 280px;
 }
 
 .content-section__copy {
@@ -706,35 +740,8 @@ button {
   line-height: 1.7;
 }
 
-.content-expand {
-  position: relative;
-  margin-top: var(--space-3);
-}
-
 .content-expand__body {
-  position: relative;
-  max-height: 72px;
-  overflow: hidden;
-}
-
-.content-expand__body::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 42px;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgb(247 242 236 / 0), var(--content-section-fade-color) 88%);
-  transition: opacity var(--transition-fast);
-}
-
-.content-expand.is-open .content-expand__body {
-  max-height: none;
-}
-
-.content-expand.is-open .content-expand__body::after {
-  opacity: 0;
+  margin-top: var(--space-3);
 }
 
 .content-expand p:first-child {
@@ -742,14 +749,15 @@ button {
 }
 
 .content-expand__button {
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: center;
-  min-height: auto;
-  margin-top: 10px;
-  padding: 0 0 4px;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: 44px;
+  margin-top: var(--space-3);
+  padding: 0;
   border: 0;
-  border-bottom: 1px solid currentColor;
   border-radius: 0;
   background: transparent;
   color: var(--color-navy);
@@ -761,21 +769,34 @@ button {
     border-color var(--transition-fast);
 }
 
+.content-expand__button::before,
 .content-expand__button::after {
+  content: "";
+  height: 1px;
+  background: rgb(16 42 67 / 24%);
+  transition: background-color var(--transition-fast);
+}
+
+.content-expand__button span::after {
   content: "↓";
   margin-left: 8px;
   color: var(--color-blue);
-  font-weight: 900;
 }
 
-.content-expand.is-open .content-expand__button::after {
+.content-section.is-open .content-expand__button span::after {
   content: "↑";
+}
+
+.content-expand__button:hover::before,
+.content-expand__button:hover::after,
+.content-expand__button:focus-visible::before,
+.content-expand__button:focus-visible::after {
+  background: rgb(86 124 157 / 56%);
 }
 
 .content-expand__button:hover,
 .content-expand__button:focus-visible {
   color: var(--color-blue);
-  border-color: var(--color-blue);
 }
 
 .content-expand p {
@@ -1495,9 +1516,10 @@ button {
     margin-top: 0;
   }
 
-  .content-section__inner,
-  .content-section:nth-of-type(even) .content-section__inner {
+  .content-section__clip,
+  .content-section:nth-of-type(even) .content-section__clip {
     grid-template-columns: 1fr;
+    max-height: 520px;
   }
 
   .content-section:nth-of-type(even) .content-section__media {
@@ -1636,8 +1658,9 @@ button {
     width: min(72%, 220px);
   }
 
-  .content-section__inner {
+  .content-section__clip {
     gap: var(--space-3);
+    max-height: 460px;
   }
 
   .content-section__media img {
@@ -1649,8 +1672,7 @@ button {
   }
 
   .content-expand__button {
-    width: auto;
-    justify-content: flex-start;
+    gap: var(--space-1);
   }
 
   .testimonial-carousel {

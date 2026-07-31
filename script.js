@@ -217,31 +217,29 @@
 
       slot.innerHTML = sections
         .map((section) => {
-          const image = section.image || {};
-
           return `
-        <section class="content-section section" id="${escapeHtml(section.id)}" data-section="${escapeHtml(section.id)}">
+        <section class="content-section section" id="${escapeHtml(section.id)}" data-section="${escapeHtml(section.id)}" data-content-expand-section>
           <div class="container content-section__inner">
-            ${renderContentSectionImage(image)}
-            <div class="content-section__copy reveal" data-reveal>
-              <p class="section-kicker">${escapeHtml(section.kicker)}</p>
-              <h2>${escapeHtml(section.title)}</h2>
-              ${renderParagraphs(section.intro)}
-              <div class="content-expand" data-content-expand>
+            <div class="content-section__clip reveal" data-reveal data-content-expand>
+              ${renderContentSectionImages(section)}
+              <div class="content-section__copy">
+                <p class="section-kicker">${escapeHtml(section.kicker)}</p>
+                <h2>${escapeHtml(section.title)}</h2>
+                ${renderParagraphs(section.intro)}
                 <div class="content-expand__body" data-content-expand-body>
                   ${renderParagraphs(section.expanded)}
                 </div>
-                <button
-                  class="content-expand__button"
-                  type="button"
-                  data-content-expand-toggle
-                  data-expand-label="${escapeHtml(section.expandLabel || "Čítať viac")}"
-                  data-collapse-label="${escapeHtml(section.collapseLabel || "Zobraziť menej")}"
-                >
-                  ${escapeHtml(section.expandLabel || "Čítať viac")}
-                </button>
               </div>
             </div>
+            <button
+              class="content-expand__button"
+              type="button"
+              data-content-expand-toggle
+              data-expand-label="${escapeHtml(section.expandLabel || "Čítať viac")}"
+              data-collapse-label="${escapeHtml(section.collapseLabel || "Zobraziť menej")}"
+            >
+              <span>${escapeHtml(section.expandLabel || "Čítať viac")}</span>
+            </button>
           </div>
         </section>
       `;
@@ -259,32 +257,48 @@
       .join("");
   }
 
-  function renderContentSectionImage(image) {
-    if (!image || !image.src) {
+  function renderContentSectionImages(section) {
+    const images = Array.isArray(section.images) && section.images.length
+      ? section.images
+      : [section.image].filter(Boolean);
+
+    if (!images.length) {
       return "";
     }
 
     return `
-      <figure class="content-section__media" data-content-expand-media>
-        <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt || "")}" loading="lazy">
+      <figure class="content-section__media">
+        ${images
+          .map(
+            (image) => `
+          <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt || "")}" loading="lazy">
+        `
+          )
+          .join("")}
       </figure>
     `;
   }
 
   function setupContentExpands() {
-    document.querySelectorAll("[data-content-expand]").forEach((expand) => {
-      const button = expand.querySelector("[data-content-expand-toggle]");
+    document.querySelectorAll("[data-content-expand-section]").forEach((section) => {
+      const expand = section.querySelector("[data-content-expand]");
+      const button = section.querySelector("[data-content-expand-toggle]");
 
-      if (!button) {
+      if (!expand || !button) {
         return;
       }
 
       button.addEventListener("click", () => {
-        const isOpen = expand.classList.toggle("is-open");
+        const isOpen = section.classList.toggle("is-open");
         const expandLabel = button.getAttribute("data-expand-label") || "Čítať viac";
         const collapseLabel = button.getAttribute("data-collapse-label") || "Zobraziť menej";
 
-        button.textContent = isOpen ? collapseLabel : expandLabel;
+        const label = button.querySelector("span");
+
+        if (label) {
+          label.textContent = isOpen ? collapseLabel : expandLabel;
+        }
+
         button.setAttribute("aria-expanded", String(isOpen));
       });
 
