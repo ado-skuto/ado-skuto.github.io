@@ -759,7 +759,8 @@ button {
   font-weight: 700;
 }
 
-.content-section__copy > p {
+.content-section__copy > p,
+.content-expand__body p {
   margin: var(--space-3) 0 0;
   color: var(--color-text-muted);
   font-size: clamp(1rem, 1.6vw, 1.16rem);
@@ -770,7 +771,7 @@ button {
   margin-top: var(--space-3);
 }
 
-.content-expand p:first-child {
+.content-expand__body p:first-child {
   margin-top: 0;
 }
 
@@ -823,12 +824,6 @@ button {
 .content-expand__button:hover,
 .content-expand__button:focus-visible {
   color: var(--color-blue);
-}
-
-.content-expand p {
-  margin: var(--space-3) 0 0;
-  color: var(--color-text-muted);
-  line-height: 1.7;
 }
 
 .testimonials {

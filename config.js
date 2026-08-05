@@ -6,7 +6,7 @@ window.SITE_CONFIG = {
     pageTitle: "Aďo Škuťo - Osobný tréner",
     metaDescription:
       "Osobný tréner, ktorý pomáha ľuďom budovať silu a svaly jednoducho bez zbytočného blúdenia v posilke.",
-    ogImage: "assets/images/coach-hero-placeholder.svg",
+    ogImage: "assets/images/coach-hero.jpg",
     language: "sk"
   },
 
@@ -224,6 +224,7 @@ window.SITE_CONFIG = {
           ["trainingExperience"],
           ["limitations"],
           ["sessionsPerWeek"],
+          ["scheduleRegularity"],
           {
             id: "body-stats",
             title: "Základné údaje",
@@ -297,7 +298,7 @@ window.SITE_CONFIG = {
                 name: "currentFrustration",
                 label: "Čo ťa na tvojej aktuálnej situácii štve najviac?",
                 type: "textarea",
-                required: true,
+                required: false,
                 rows: 4,
                 placeholder: "Napíš stručne, čo chceš zmeniť"
               },
@@ -361,7 +362,18 @@ window.SITE_CONFIG = {
                 label: "Koľko krát do týždňa vieš alebo by si chcel cvičiť?",
                 type: "radio",
                 required: true,
-                options: ["1x", "2x", "3x", "4x", "5x", "6x", "7x"]
+                options: ["0x", "1x", "2x", "3x"]
+              },
+              {
+                name: "scheduleRegularity",
+                label: "Vieš chodiť trénovať v pravidelné dní a časi?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Áno",
+                  "Nie, pracujem na zmeny",
+                  "Nie, mám chaotický rozvrh"
+                ]
               },
               {
                 name: "age",
@@ -528,7 +540,7 @@ window.SITE_CONFIG = {
                 name: "currentFrustration",
                 label: "Čo ťa na tvojej aktuálnej situácii štve najviac?",
                 type: "textarea",
-                required: true,
+                required: false,
                 rows: 4,
                 placeholder: "Napíš stručne, čo chceš zmeniť"
               },
@@ -1016,7 +1028,7 @@ window.SITE_CONFIG = {
             name: "currentFrustration",
             label: "Čo ťa na tvojej aktuálnej situácii štve najviac?",
             type: "textarea",
-            required: true,
+            required: false,
             rows: 4,
             placeholder: "Napíš stručne, čo chceš zmeniť"
           },

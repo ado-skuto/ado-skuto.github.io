@@ -1378,6 +1378,7 @@
       splitPreference: normalizeFieldValue(values.splitPreference, values.splitPreference__other),
       trainingLevel: normalizeFieldValue(values.trainingLevel, values.trainingLevel__other),
       sessionsPerWeek: normalizeFieldValue(values.sessionsPerWeek, values.sessionsPerWeek__other),
+      scheduleRegularity: normalizeFieldValue(values.scheduleRegularity, values.scheduleRegularity__other),
       workoutLength: normalizeFieldValue(values.workoutLength, values.workoutLength__other),
       equipmentAccess: normalizeFieldValue(values.equipmentAccess, values.equipmentAccess__other),
       cardioApproach: normalizeFieldValue(values.cardioApproach, values.cardioApproach__other),
