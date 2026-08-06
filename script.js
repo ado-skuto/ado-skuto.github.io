@@ -285,12 +285,16 @@
       return "";
     }
 
+    const stackClass = images.length > 1 ? " content-section__media--stack" : "";
+
     return `
-      <figure class="content-section__media">
+      <figure class="content-section__media${stackClass}">
         ${images
           .map(
             (image) => `
-          <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt || "")}" loading="lazy">
+          <span class="content-section__media-item">
+            <img src="${escapeHtml(image.src)}" alt="${escapeHtml(image.alt || "")}" loading="lazy">
+          </span>
         `
           )
           .join("")}

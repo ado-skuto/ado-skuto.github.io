@@ -726,7 +726,33 @@ button {
   align-content: start;
 }
 
+#is-it-for-you .content-section__media {
+  gap: 50px;
+}
+
+#how-i-work .content-section__media {
+  gap: 50px;
+}
+
 .content-section__media::before {
+  content: "";
+  position: absolute;
+  inset: 12% -6% -8% 10%;
+  z-index: -1;
+  border-radius: var(--radius-card);
+  background: rgb(86 124 157 / 12%);
+}
+
+.content-section__media--stack::before {
+  content: none;
+}
+
+.content-section__media-item {
+  position: relative;
+  display: block;
+}
+
+.content-section__media--stack .content-section__media-item::before {
   content: "";
   position: absolute;
   inset: 12% -6% -8% 10%;

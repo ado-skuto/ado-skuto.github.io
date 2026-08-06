@@ -46,10 +46,20 @@ window.SITE_CONFIG = {
       id: "is-it-for-you",
       kicker: "Je to pre teba?",
       title: "Možno len potrebuješ jasný smer",
-      image: {
-        src: "assets/images/comparison-coach.jpg",
-        alt: "Tréningová fotografia"
-      },
+      images: [
+        {
+          src: "assets/images/comparison-coach.jpg",
+          alt: "Tréningová fotografia"
+        },
+        {
+          src: "assets/images/comparison-1.jpg",
+          alt: "Porovnávacia fotografia klienta"
+        },
+        {
+          src: "assets/images/comparison-2.jpg",
+          alt: "Porovnávacia fotografia klienta"
+        }
+      ],
       intro: [
         "Niekedy je to únava. Inokedy len pocit, že telo už nie je také, aké bývalo a nevieš presne prečo. Inokedy si zahltený príliš veľa informáciami a nemáš jasný plán.",
         "Možno si skúšal cvičiť sám, no zatiaľ si nenašiel spôsob, ktorý naozaj sedí tebe. Alebo nevieš, čo funguje a nechceš strácať čas. A to je v poriadku. Každý niekde začínal, aj ja."
@@ -84,10 +94,16 @@ window.SITE_CONFIG = {
       id: "how-i-work",
       kicker: "Ako pracujem",
       title: "Plán nastavím podľa teba",
-      image: {
-        src: "assets/images/comparison-coach-2.jpg",
-        alt: "Ilustrácia tréningového plánovania"
-      },
+      images: [
+        {
+          src: "assets/images/comparison-coach-2.jpg",
+          alt: "Ilustrácia tréningového plánovania"
+        },
+        {
+          src: "assets/images/form-3.jpg",
+          alt: "Tréningová fotografia"
+        }
+      ],
       intro:
         "Ak si môj klient, dostaneš plán prispôsobený tebe na mieru, cviky, ktoré ti sedia a sú zamerané na tvoje silné aj slabé stránky, s dôrazom na to, čo chceš zlepšiť.",
       expanded: [
