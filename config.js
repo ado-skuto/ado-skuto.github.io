@@ -6,7 +6,7 @@ window.SITE_CONFIG = {
     pageTitle: "Aďo Škuťo - Osobný tréner",
     metaDescription:
       "Osobný tréner, ktorý pomáha ľuďom budovať silu a svaly jednoducho bez zbytočného blúdenia v posilke.",
-    ogImage: "assets/images/coach-hero-placeholder.svg",
+    ogImage: "assets/images/coach-hero.jpg",
     language: "sk"
   },
 
@@ -46,10 +46,20 @@ window.SITE_CONFIG = {
       id: "is-it-for-you",
       kicker: "Je to pre teba?",
       title: "Možno len potrebuješ jasný smer",
-      image: {
-        src: "assets/images/comparison-coach.jpg",
-        alt: "Tréningová fotografia"
-      },
+      images: [
+        {
+          src: "assets/images/comparison-coach.jpg",
+          alt: "Tréningová fotografia"
+        },
+        {
+          src: "assets/images/comparison-1.jpg",
+          alt: "Porovnávacia fotografia klienta"
+        },
+        {
+          src: "assets/images/comparison-2.jpg",
+          alt: "Porovnávacia fotografia klienta"
+        }
+      ],
       intro: [
         "Niekedy je to únava. Inokedy len pocit, že telo už nie je také, aké bývalo a nevieš presne prečo. Inokedy si zahltený príliš veľa informáciami a nemáš jasný plán.",
         "Možno si skúšal cvičiť sám, no zatiaľ si nenašiel spôsob, ktorý naozaj sedí tebe. Alebo nevieš, čo funguje a nechceš strácať čas. A to je v poriadku. Každý niekde začínal, aj ja."
@@ -84,10 +94,16 @@ window.SITE_CONFIG = {
       id: "how-i-work",
       kicker: "Ako pracujem",
       title: "Plán nastavím podľa teba",
-      image: {
-        src: "assets/images/comparison-coach-2.jpg",
-        alt: "Ilustrácia tréningového plánovania"
-      },
+      images: [
+        {
+          src: "assets/images/comparison-coach-2.jpg",
+          alt: "Ilustrácia tréningového plánovania"
+        },
+        {
+          src: "assets/images/form-3.jpg",
+          alt: "Tréningová fotografia"
+        }
+      ],
       intro:
         "Ak si môj klient, dostaneš plán prispôsobený tebe na mieru, cviky, ktoré ti sedia a sú zamerané na tvoje silné aj slabé stránky, s dôrazom na to, čo chceš zlepšiť.",
       expanded: [
@@ -224,6 +240,7 @@ window.SITE_CONFIG = {
           ["trainingExperience"],
           ["limitations"],
           ["sessionsPerWeek"],
+          ["scheduleRegularity"],
           {
             id: "body-stats",
             title: "Základné údaje",
@@ -297,7 +314,7 @@ window.SITE_CONFIG = {
                 name: "currentFrustration",
                 label: "Čo ťa na tvojej aktuálnej situácii štve najviac?",
                 type: "textarea",
-                required: true,
+                required: false,
                 rows: 4,
                 placeholder: "Napíš stručne, čo chceš zmeniť"
               },
@@ -361,7 +378,18 @@ window.SITE_CONFIG = {
                 label: "Koľko krát do týždňa vieš alebo by si chcel cvičiť?",
                 type: "radio",
                 required: true,
-                options: ["1x", "2x", "3x", "4x", "5x", "6x", "7x"]
+                options: ["0x", "1x", "2x", "3x"]
+              },
+              {
+                name: "scheduleRegularity",
+                label: "Vieš chodiť trénovať v pravidelné dní a časi?",
+                type: "radio",
+                required: true,
+                options: [
+                  "Áno",
+                  "Nie, pracujem na zmeny",
+                  "Nie, mám chaotický rozvrh"
+                ]
               },
               {
                 name: "age",
@@ -528,7 +556,7 @@ window.SITE_CONFIG = {
                 name: "currentFrustration",
                 label: "Čo ťa na tvojej aktuálnej situácii štve najviac?",
                 type: "textarea",
-                required: true,
+                required: false,
                 rows: 4,
                 placeholder: "Napíš stručne, čo chceš zmeniť"
               },
@@ -1016,7 +1044,7 @@ window.SITE_CONFIG = {
             name: "currentFrustration",
             label: "Čo ťa na tvojej aktuálnej situácii štve najviac?",
             type: "textarea",
-            required: true,
+            required: false,
             rows: 4,
             placeholder: "Napíš stručne, čo chceš zmeniť"
           },

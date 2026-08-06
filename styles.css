@@ -726,7 +726,33 @@ button {
   align-content: start;
 }
 
+#is-it-for-you .content-section__media {
+  gap: 50px;
+}
+
+#how-i-work .content-section__media {
+  gap: 50px;
+}
+
 .content-section__media::before {
+  content: "";
+  position: absolute;
+  inset: 12% -6% -8% 10%;
+  z-index: -1;
+  border-radius: var(--radius-card);
+  background: rgb(86 124 157 / 12%);
+}
+
+.content-section__media--stack::before {
+  content: none;
+}
+
+.content-section__media-item {
+  position: relative;
+  display: block;
+}
+
+.content-section__media--stack .content-section__media-item::before {
   content: "";
   position: absolute;
   inset: 12% -6% -8% 10%;
@@ -759,7 +785,8 @@ button {
   font-weight: 700;
 }
 
-.content-section__copy > p {
+.content-section__copy > p,
+.content-expand__body p {
   margin: var(--space-3) 0 0;
   color: var(--color-text-muted);
   font-size: clamp(1rem, 1.6vw, 1.16rem);
@@ -770,7 +797,7 @@ button {
   margin-top: var(--space-3);
 }
 
-.content-expand p:first-child {
+.content-expand__body p:first-child {
   margin-top: 0;
 }
 
@@ -823,12 +850,6 @@ button {
 .content-expand__button:hover,
 .content-expand__button:focus-visible {
   color: var(--color-blue);
-}
-
-.content-expand p {
-  margin: var(--space-3) 0 0;
-  color: var(--color-text-muted);
-  line-height: 1.7;
 }
 
 .testimonials {
