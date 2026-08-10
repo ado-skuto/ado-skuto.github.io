@@ -1758,9 +1758,12 @@ button {
     grid-column: 1 / -1;
     min-height: 330px;
     order: -1;
+    z-index: 1;
   }
 
   .testimonial-carousel__button {
+    position: relative;
+    z-index: 4;
     width: 100%;
   }
 
