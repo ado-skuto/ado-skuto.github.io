@@ -31,35 +31,75 @@ window.SITE_CONFIG = {
   finalCta: {
     kicker: "Začni spoluprácu",
     title: "Neváhaj, prvý tréning máš odo mňa zadarmo",
-    label: "Späť na služby",
+    label: "Chcem prvý tréning zadarmo",
     href: "#offers"
   },
 
   // Move section ids between these arrays to change their position on the page.
   contentSectionPlacement: {
+    beforeOffers: ["client-situations"],
     afterOffers: ["is-it-for-you"],
     afterTestimonials: ["about-me", "how-i-work"]
   },
 
   contentSections: [
     {
-      id: "is-it-for-you",
-      kicker: "Je to pre teba?",
-      title: "Možno len potrebuješ jasný smer",
+      id: "client-situations",
+      mediaLayout: "spread",
+      kicker: "Príbehy klientov",
+      title: "Možno poznáš niektorú z týchto situácií",
       images: [
         {
-          src: "assets/images/comparison-coach.jpg",
-          alt: "Tréningová fotografia"
+          src: "assets/images/comparison-2.jpg",
+          alt: "Porovnanie Tomášovej postavy pred spoluprácou a po nej"
         },
         {
           src: "assets/images/comparison-1.jpg",
-          alt: "Porovnávacia fotografia klienta"
+          alt: "Porovnanie Martinovej postavy pred spoluprácou a po nej"
         },
         {
-          src: "assets/images/comparison-2.jpg",
-          alt: "Porovnávacia fotografia klienta"
+          src: "assets/images/testimonials/64e775f7-e079-4483-ad89-621fe3933366.jpg",
+          alt: "Recenzia od Martina"
         }
       ],
+      stories: [
+        {
+          title: "Martin",
+          paragraphs: [
+            "Martin je po štyridsiatke, veľa cestuje kvôli práci, má rodinu a málo času. Bál sa, že do fitka bude musieť chodiť päťkrát do týždňa a nebude to stíhať. Keď som mu povedal, že stačia dva správne nastavené 1 hodinové tréningy týždenne, neveril. Nemusí chodiť päťkrát, ani štyrikrát. Stačia dva, ak sa sústredí len na to podstatné.",
+            "Spočiatku bol skeptický. Keď začal vidieť prvé zmeny, pochopil, koľko vecí predtým robil zbytočne.",
+            "Dnes má 15 kíl dole, je silnejší, nabral svaly a ako povedal, opasok mu je priveľký."
+          ]
+        },
+        {
+          title: "Palči",
+          paragraphs: [
+            "Palči bol kedysi športovec. Cvičil, hýbal sa, bolo to preňho prirodzené. Potom prišiel dospelácky život, práca, iné koníčky, a na cvičenie sa zabudlo.",
+            "Po tridsiatke si všimol, koľko toho zanedbal. Najviac ho štvalo, že to, čo kedysi zvládal ľahko, zrazu nešlo a už nevyzerá ako zamlada.",
+            "Potreboval nakopnutie a niekoho, kto ho nasmeruje, aby necvičil bezhlavo. Za tri mesiace sa posunul výrazne. Telo si pamätá viac, než si myslel."
+          ]
+        },
+        {
+          title: "Tomáš — online coaching",
+          paragraphs: [
+            "Tomáš je mladý chalan, ktorý sem-tam cvičil, ale nevedel, na čo sa sústrediť. Na internete našiel toľko protichodných informácií, že nevedel, čomu veriť. Osobné tréningy boli preňho finančne aj časovo nedostupné.",
+            "Keď ma oslovil, chcel, aby som mu presne povedal, čo má robiť, a aby sa na mňa mohol obrátiť online vždy, keď potrebuje.",
+            "Prispôsobili sme mu tréning aj jedálniček jeho preferenciám, časovému plánu a postave, ktorú chcel dosiahnuť.",
+            "Prestal si lámať hlavu. Držal sa plánu. A výsledok prišiel."
+          ]
+        }
+      ],
+      expandLabel: "Čítať viac"
+    },
+    {
+      id: "is-it-for-you",
+      layout: "media-flow",
+      kicker: "Je to pre teba?",
+      title: "Možno len potrebuješ jasný smer",
+      image: {
+        src: "assets/images/comparison-coach.jpg",
+        alt: "Tréningová fotografia"
+      },
       intro: [
         "Niekedy je to únava. Inokedy len pocit, že telo už nie je také, aké bývalo a nevieš presne prečo. Inokedy si zahltený príliš veľa informáciami a nemáš jasný plán.",
         "Možno si skúšal cvičiť sám, no zatiaľ si nenašiel spôsob, ktorý naozaj sedí tebe. Alebo nevieš, čo funguje a nechceš strácať čas. A to je v poriadku. Každý niekde začínal, aj ja."
@@ -117,7 +157,7 @@ window.SITE_CONFIG = {
 
   hero: {
     kicker: "Prémiový osobný coaching",
-    headline: "Pomôžem budovať silu a svaly jednoducho bez zbytočného blúdenia v posilke",
+    headline: "Cvič bez chaosu. Získaj energiu, zlepši si postavu a cíť sa dobre vo svojom vlastnom tele – s jasným plánom, ktorý funguje.",
     subheadline:
       "Prvý tréning máš odo mňa zadarmo (Kysucké Nové Mesto).",
     secondaryCta: { label: "Pozrieť možnosti spolupráce", href: "#offers" },
@@ -140,8 +180,8 @@ window.SITE_CONFIG = {
         "Kontrola techniky naživo",
         "Motivácia a podpora, keď to najviac potrebuješ"
       ],
-      price: "Cena: dohodneme na konzultácii",
-      ctaLabel: "Zistiť viac",
+      price: "Tréning zadarmo - zistíme, či ti viem pomôcť. Aktuálny cenník ti pošlem po vyplnení dotazníka.",
+      ctaLabel: "Chcem prvý tréning zadarmo",
       flow: "personalTraining"
     },
     {
@@ -157,7 +197,7 @@ window.SITE_CONFIG = {
         "Základné odporúčania k stravovaniu a suplementom"
       ],
       price: "Cena: 99 € / mesiac",
-      ctaLabel: "Zistiť viac",
+      ctaLabel: "Chcem vlastný plán",
       flow: "onlineCoaching"
     },
     {
@@ -173,7 +213,7 @@ window.SITE_CONFIG = {
         "2-týždňová podpora, ak budeš chcieť niečo zmeniť alebo upraviť"
       ],
       price: "Cena: 49 € / jednorazovo",
-      ctaLabel: "Zistiť viac",
+      ctaLabel: "Chcem vlastný plán",
       flow: "trainingPlan"
     }
   ],
@@ -200,7 +240,7 @@ window.SITE_CONFIG = {
   // 2. Replace the entry.* ids in entryKeys with your real field keys.
   // 3. Keep the "name" values in step fields aligned with entryKeys below.
   questionnaire: {
-    triggerLabelFallback: "Zistiť viac",
+    triggerLabelFallback: "Chcem vlastný plán",
     selectedServiceLabel: "Vybraná služba",
     stepCounterLabel: "Krok {current} z {total}",
     nextLabel: "Pokračovať",
