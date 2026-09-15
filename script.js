@@ -236,8 +236,10 @@
 
       slot.innerHTML = sections
         .map((section) => {
+          const layoutClass = section.layout === "media-flow" ? " content-section--media-flow" : "";
+
           return `
-        <section class="content-section section" id="${escapeHtml(section.id)}" data-section="${escapeHtml(section.id)}" data-content-expand-section>
+        <section class="content-section section${layoutClass}" id="${escapeHtml(section.id)}" data-section="${escapeHtml(section.id)}" data-content-expand-section>
           <div class="container content-section__inner">
             <div class="content-section__clip reveal" data-reveal data-content-expand>
               ${renderContentSectionImages(section)}
@@ -247,6 +249,7 @@
                 ${renderParagraphs(section.intro)}
                 <div class="content-expand__body" data-content-expand-body>
                   ${renderParagraphs(section.expanded)}
+                  ${renderContentStories(section.stories)}
                 </div>
               </div>
             </div>
@@ -276,6 +279,23 @@
       .join("");
   }
 
+  function renderContentStories(stories) {
+    if (!Array.isArray(stories) || !stories.length) {
+      return "";
+    }
+
+    return stories
+      .map(
+        (story) => `
+          <div class="content-story">
+            <h3>${escapeHtml(story.title)}</h3>
+            ${renderParagraphs(story.paragraphs)}
+          </div>
+        `
+      )
+      .join("");
+  }
+
   function renderContentSectionImages(section) {
     const images = Array.isArray(section.images) && section.images.length
       ? section.images
@@ -286,9 +306,10 @@
     }
 
     const stackClass = images.length > 1 ? " content-section__media--stack" : "";
+    const spreadClass = section.mediaLayout === "spread" ? " content-section__media--spread" : "";
 
     return `
-      <figure class="content-section__media${stackClass}">
+      <figure class="content-section__media${stackClass}${spreadClass}">
         ${images
           .map(
             (image) => `
