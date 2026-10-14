@@ -23,6 +23,16 @@ python -m http.server 8000
 
 Then open `http://localhost:8000`.
 
+## Validate configuration
+
+Run the dependency-free configuration check after changing services, questionnaire fields, page groups, or image paths:
+
+```powershell
+node scripts/validate-config.js
+```
+
+The validator checks service-to-flow mappings, questionnaire field placement, submission settings, and local asset references.
+
 ## Deployment
 
 This repo is intended for GitHub Pages deployment.
