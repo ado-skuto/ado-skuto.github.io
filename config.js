@@ -50,16 +50,16 @@ window.SITE_CONFIG = {
       title: "Možno poznáš niektorú z týchto situácií",
       images: [
         {
-          src: "assets/images/comparison-2.jpg",
-          alt: "Porovnanie Tomášovej postavy pred spoluprácou a po nej"
-        },
-        {
           src: "assets/images/comparison-1.jpg",
           alt: "Porovnanie Martinovej postavy pred spoluprácou a po nej"
         },
         {
-          src: "assets/images/testimonials/64e775f7-e079-4483-ad89-621fe3933366.jpg",
-          alt: "Recenzia od Martina"
+          src: "assets/images/comparison-3.jpg",
+          alt: "Porovnanie Palčiho postavy pred spoluprácou a po nej"
+        },
+        {
+          src: "assets/images/comparison-2.jpg",
+          alt: "Porovnanie Tomášovej postavy pred spoluprácou a po nej"
         }
       ],
       stories: [
