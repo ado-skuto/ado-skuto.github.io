@@ -157,7 +157,7 @@ window.SITE_CONFIG = {
 
   hero: {
     kicker: "Prémiový osobný coaching",
-    headline: "Cvič bez chaosu. Získaj energiu, zlepši si postavu a cíť sa dobre vo svojom vlastnom tele – s jasným plánom, ktorý funguje.",
+    headline: "Cvič bez chaosu. Zlepši postavu bez toho, aby ti z fitka vybuchla hlava – s jasným plánom, ktorý funguje.",
     subheadline:
       "Prvý tréning máš odo mňa zadarmo (Kysucké Nové Mesto).",
     secondaryCta: { label: "Pozrieť možnosti spolupráce", href: "#offers" },
