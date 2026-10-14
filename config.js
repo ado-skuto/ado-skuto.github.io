@@ -50,16 +50,16 @@ window.SITE_CONFIG = {
       title: "Možno poznáš niektorú z týchto situácií",
       images: [
         {
-          src: "assets/images/comparison-2.jpg",
-          alt: "Porovnanie Tomášovej postavy pred spoluprácou a po nej"
-        },
-        {
           src: "assets/images/comparison-1.jpg",
           alt: "Porovnanie Martinovej postavy pred spoluprácou a po nej"
         },
         {
-          src: "assets/images/testimonials/64e775f7-e079-4483-ad89-621fe3933366.jpg",
-          alt: "Recenzia od Martina"
+          src: "assets/images/comparison-3.jpg",
+          alt: "Porovnanie Palčiho postavy pred spoluprácou a po nej"
+        },
+        {
+          src: "assets/images/comparison-2.jpg",
+          alt: "Porovnanie Tomášovej postavy pred spoluprácou a po nej"
         }
       ],
       stories: [
@@ -157,7 +157,7 @@ window.SITE_CONFIG = {
 
   hero: {
     kicker: "Prémiový osobný coaching",
-    headline: "Cvič bez chaosu. Získaj energiu, zlepši si postavu a cíť sa dobre vo svojom vlastnom tele – s jasným plánom, ktorý funguje.",
+    headline: "Cvič bez chaosu. Zlepši postavu bez toho, aby ti z fitka vybuchla hlava – s jasným plánom, ktorý funguje.",
     subheadline:
       "Prvý tréning máš odo mňa zadarmo (Kysucké Nové Mesto).",
     secondaryCta: { label: "Pozrieť možnosti spolupráce", href: "#offers" },
@@ -173,6 +173,13 @@ window.SITE_CONFIG = {
     {
       id: "personal-training",
       title: "Osobný tréning",
+      image: {
+        src: "assets/images/form-step-coach-placeholder.svg",
+        alt: ""
+      },
+      initialValues: {
+        cooperationType: "Osobné tréningy"
+      },
       description:
         "Prebieha v Riecky Fitness KNM. Pre teba, ak chceš niekoho vedľa seba, kto ťa opraví, podrží a nakopne.",
       bullets: [
@@ -187,6 +194,13 @@ window.SITE_CONFIG = {
     {
       id: "online-coaching",
       title: "Online coaching",
+      image: {
+        src: "assets/images/form-step-goal-placeholder.svg",
+        alt: ""
+      },
+      initialValues: {
+        cooperationType: "Online coaching"
+      },
       description:
         "Pre teba, ak chceš plán a podporu, ale tréning zvládneš sám.",
       bullets: [
@@ -203,6 +217,10 @@ window.SITE_CONFIG = {
     {
       id: "training-plan",
       title: "Zostavenie tréningového plánu",
+      image: {
+        src: "assets/images/form-step-details-placeholder.svg",
+        alt: ""
+      },
       description:
         "Pre teba, ak cvičíš sám a potrebuješ efektívny plán šitý na mieru tvojim cieľom.",
       bullets: [
@@ -235,10 +253,6 @@ window.SITE_CONFIG = {
   ],
 
   // Multi-step questionnaire used by all services.
-  // To connect a real Google Form:
-  // 1. Put your Google Forms formResponse URL into actionUrl.
-  // 2. Replace the entry.* ids in entryKeys with your real field keys.
-  // 3. Keep the "name" values in step fields aligned with entryKeys below.
   questionnaire: {
     triggerLabelFallback: "Chcem vlastný plán",
     selectedServiceLabel: "Vybraná služba",
@@ -257,7 +271,6 @@ window.SITE_CONFIG = {
       kicker: "Posledný krok",
       title: "Potvrdenie a odoslanie",
       description: "Skontroluj si odpovede, dokonči captcha a odošli dotazník.",
-      emptyAnswerLabel: "Nezadané",
       editHint: "Ak chceš niečo upraviť, použi Späť.",
       emailLabel: "Email",
       emailPlaceholder: "tvoj@email.sk",
@@ -267,8 +280,6 @@ window.SITE_CONFIG = {
     flows: {
       personalTraining: {
         submission: {
-          provider: "web3forms",
-          endpointUrl: "https://api.web3forms.com/submit",
           accessKey: "d500eaea-022c-4cee-a9fc-ba8c504a2f3b",
           subject: "Osobny trening - new website form submission"
         },
@@ -510,8 +521,6 @@ window.SITE_CONFIG = {
       },
       onlineCoaching: {
         submission: {
-          provider: "web3forms",
-          endpointUrl: "https://api.web3forms.com/submit",
           accessKey: "072ef63a-acf7-43df-8fd9-145abc6749f8",
           subject: "Online coaching - new website form submission"
         },
@@ -741,8 +750,6 @@ window.SITE_CONFIG = {
       },
       trainingPlan: {
         submission: {
-          provider: "web3forms",
-          endpointUrl: "https://api.web3forms.com/submit",
           accessKey: "192e9762-0b1f-4d08-862d-a1916d603a2f",
           subject: "Training plan - new website form submission"
         },
@@ -976,13 +983,6 @@ window.SITE_CONFIG = {
                 type: "text",
                 required: true,
                 placeholder: "Napríklad IG: @tvojprofil alebo telefón"
-              },
-              {
-                name: "gender",
-                label: "Pohlavie",
-                type: "radio",
-                required: true,
-                options: ["Žena", "Muž"]
               },
               {
                 name: "fullName",

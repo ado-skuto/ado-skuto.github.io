@@ -22,7 +22,6 @@
     modalCloseButtons: document.querySelectorAll("[data-modal-close]"),
     modalTitle: document.querySelector("[data-step-title]"),
     modalDescription: document.querySelector("[data-step-description]"),
-    modalMediaKicker: document.querySelector("[data-step-media-kicker]"),
     modalImage: document.querySelector("[data-step-image]"),
     modalMediaCaption: document.querySelector("[data-step-media-caption]"),
     selectedService: document.querySelector("[data-selected-service]"),
@@ -125,7 +124,9 @@
     }
 
     dom.navList.innerHTML = config.navigation
-      .map((item) => `<li><a href="${item.href}">${item.label}</a></li>`)
+      .map(
+        (item) => `<li><a href="${escapeHtml(item.href)}">${escapeHtml(item.label)}</a></li>`
+      )
       .join("");
   }
 
@@ -135,8 +136,8 @@
     }
 
     dom.brand.innerHTML = `
-      <span class="site-brand__eyebrow">${config.brand.eyebrow}</span>
-      <span class="site-brand__name">${config.brand.coachName}</span>
+      <span class="site-brand__eyebrow">${escapeHtml(config.brand.eyebrow)}</span>
+      <span class="site-brand__name">${escapeHtml(config.brand.coachName)}</span>
     `;
   }
 
@@ -171,22 +172,22 @@
 
     dom.offersList.innerHTML = config.offers
       .map(
-        (offer, index) => {
-          const image = getOfferImage(offer, index);
+        (offer) => {
+          const image = getOfferImage(offer);
 
           return `
           <article
             class="info-card reveal"
             data-reveal
-            data-service-card="${offer.id}"
+            data-service-card="${escapeHtml(offer.id)}"
             ${offer.disabled ? 'aria-disabled="true"' : ""}
           >
             <div class="info-card__visual" aria-hidden="true">
-              <img src="${image.src}" alt="" width="320" height="240" loading="lazy">
+              <img src="${escapeHtml(image.src)}" alt="" width="320" height="240" loading="lazy">
             </div>
             <div class="info-card__body">
-              <h3>${offer.title}</h3>
-              <p>${offer.description}</p>
+              <h3>${escapeHtml(offer.title)}</h3>
+              <p>${escapeHtml(offer.description)}</p>
               ${renderOfferBullets(offer.bullets)}
               ${offer.price ? `<p class="info-card__price">${escapeHtml(offer.price)}</p>` : ""}
             </div>
@@ -195,7 +196,7 @@
               type="button"
               ${offer.disabled ? "disabled" : ""}
             >
-              ${offer.ctaLabel || config.questionnaire.triggerLabelFallback}
+              ${escapeHtml(offer.ctaLabel || config.questionnaire.triggerLabelFallback)}
             </button>
           </article>
         `;
@@ -359,7 +360,7 @@
       .replace(/'/g, "&#39;");
   }
 
-  function getOfferImage(offer, index) {
+  function getOfferImage(offer) {
     if (typeof offer.image === "string") {
       return {
         src: offer.image,
@@ -371,22 +372,7 @@
       return offer.image;
     }
 
-    const fallbackImages = [
-      {
-        src: "assets/images/form-step-coach-placeholder.svg",
-        alt: ""
-      },
-      {
-        src: "assets/images/form-step-goal-placeholder.svg",
-        alt: ""
-      },
-      {
-        src: "assets/images/form-step-details-placeholder.svg",
-        alt: ""
-      }
-    ];
-
-    return fallbackImages[index % fallbackImages.length];
+    return { src: "", alt: "" };
   }
 
   function renderTestimonials() {
@@ -532,7 +518,7 @@
     }
 
     const mailLink = `
-      <a class="footer-link" href="mailto:${config.contact.email}" aria-label="Email">
+      <a class="footer-link" href="mailto:${escapeHtml(config.contact.email)}" aria-label="Email">
         ${getIconMarkup("mail")}
         <span class="sr-only">Email</span>
       </a>
@@ -543,25 +529,25 @@
         (link) => `
           <a
             class="footer-link"
-            href="${link.href}"
+            href="${escapeHtml(link.href)}"
             target="_blank"
             rel="noreferrer"
-            aria-label="${link.label}"
+            aria-label="${escapeHtml(link.label)}"
           >
             ${getIconMarkup(link.icon)}
-            <span class="sr-only">${link.label}</span>
+            <span class="sr-only">${escapeHtml(link.label)}</span>
           </a>
         `
       )
       .join("");
 
     dom.footerContent.innerHTML = `
-      <p>${config.brand.coachName}</p>
+      <p>${escapeHtml(config.brand.coachName)}</p>
       <div class="footer-socials">
         ${mailLink}
         ${socialLinks}
       </div>
-      <a href="#top">${config.footer.backToTopLabel}</a>
+      <a href="#top">${escapeHtml(config.footer.backToTopLabel)}</a>
       <p>${config.footer.copyright}</p>
     `;
 
@@ -770,15 +756,10 @@
   }
 
   function getServiceDefaults(serviceId) {
-    if (serviceId === "personal-training") {
-      return { cooperationType: "Osobné tréningy" };
-    }
-
-    if (serviceId === "online-coaching") {
-      return { cooperationType: "Online coaching" };
-    }
-
-    return {};
+    const selectedService = config.offers.find((offer) => offer.id === serviceId);
+    return selectedService && selectedService.initialValues
+      ? { ...selectedService.initialValues }
+      : {};
   }
 
   function closeQuestionnaire() {
@@ -921,10 +902,6 @@
       .replace("{current}", String(current))
       .replace("{total}", String(total));
 
-    if (dom.modalMediaKicker) {
-      dom.modalMediaKicker.textContent = page.kicker;
-    }
-
     if (dom.modalTitle) {
       dom.modalTitle.textContent = page.title;
     }
@@ -977,14 +954,15 @@
   }
 
   function renderFieldMarkup(field) {
+    const fieldName = escapeHtml(field.name);
     const commonAttributes = [
-      `name="${field.name}"`,
-      `id="${field.name}"`,
+      `name="${fieldName}"`,
+      `id="${fieldName}"`,
       field.required ? "required" : "",
-      field.placeholder ? `placeholder="${field.placeholder}"` : "",
-      field.autocomplete ? `autocomplete="${field.autocomplete}"` : "",
-      field.inputmode ? `inputmode="${field.inputmode}"` : "",
-      field.pattern ? `pattern="${field.pattern}"` : ""
+      field.placeholder ? `placeholder="${escapeHtml(field.placeholder)}"` : "",
+      field.autocomplete ? `autocomplete="${escapeHtml(field.autocomplete)}"` : "",
+      field.inputmode ? `inputmode="${escapeHtml(field.inputmode)}"` : "",
+      field.pattern ? `pattern="${escapeHtml(field.pattern)}"` : ""
     ]
       .filter(Boolean)
       .join(" ");
@@ -992,7 +970,7 @@
     if (field.type === "radio") {
       return `
         <fieldset class="form-field form-field--group">
-          <legend>${field.label}</legend>
+          <legend>${escapeHtml(field.label)}</legend>
           <div class="choice-list">
             ${field.options
               .map(
@@ -1000,11 +978,11 @@
                   <label class="choice-item">
                     <input
                       type="radio"
-                      name="${field.name}"
-                      value="${option}"
+                      name="${fieldName}"
+                      value="${escapeHtml(option)}"
                       ${field.required && index === 0 ? "required" : ""}
                     >
-                    <span>${option}</span>
+                    <span>${escapeHtml(option)}</span>
                   </label>
                 `
               )
@@ -1018,7 +996,7 @@
     if (field.type === "checkbox") {
       return `
         <fieldset class="form-field form-field--group" data-max-selections="${field.maxSelections || ""}">
-          <legend>${field.label}</legend>
+          <legend>${escapeHtml(field.label)}</legend>
           <div class="choice-list">
             ${field.options
               .map(
@@ -1026,10 +1004,10 @@
                   <label class="choice-item">
                     <input
                       type="checkbox"
-                      name="${field.name}"
-                      value="${option}"
+                      name="${fieldName}"
+                      value="${escapeHtml(option)}"
                     >
-                    <span>${option}</span>
+                    <span>${escapeHtml(option)}</span>
                   </label>
                 `
               )
@@ -1043,8 +1021,8 @@
     if (field.type === "textarea") {
       return `
         <div class="form-field">
-          <label for="${field.name}">${field.label}</label>
-          <textarea ${commonAttributes} rows="${field.rows || 4}"></textarea>
+          <label for="${fieldName}">${escapeHtml(field.label)}</label>
+          <textarea ${commonAttributes} rows="${escapeHtml(field.rows || 4)}"></textarea>
         </div>
       `;
     }
@@ -1052,10 +1030,14 @@
     if (field.type === "select") {
       return `
         <div class="form-field">
-          <label for="${field.name}">${field.label}</label>
+          <label for="${fieldName}">${escapeHtml(field.label)}</label>
           <select ${commonAttributes}>
             <option value="">Vyber možnosť</option>
-            ${field.options.map((option) => `<option value="${option}">${option}</option>`).join("")}
+            ${field.options
+              .map(
+                (option) => `<option value="${escapeHtml(option)}">${escapeHtml(option)}</option>`
+              )
+              .join("")}
           </select>
         </div>
       `;
@@ -1063,27 +1045,28 @@
 
     return `
       <div class="form-field">
-        <label for="${field.name}">${field.label}</label>
-        <input ${commonAttributes} type="${field.type}">
-        ${field.invalidMessage ? `<p class="field-error" data-field-error-for="${field.name}" aria-live="polite"></p>` : ""}
+        <label for="${fieldName}">${escapeHtml(field.label)}</label>
+        <input ${commonAttributes} type="${escapeHtml(field.type)}">
+        ${field.invalidMessage ? `<p class="field-error" data-field-error-for="${fieldName}" aria-live="polite"></p>` : ""}
       </div>
     `;
   }
 
   function renderOtherOption(field, type) {
-    const otherName = `${field.name}__other`;
+    const fieldName = escapeHtml(field.name);
+    const otherName = `${fieldName}__other`;
     const otherValue = "__other__";
 
     return `
       <label class="choice-item choice-item--other">
-        <input type="${type}" name="${field.name}" value="${otherValue}">
-        <span>${field.other.label}</span>
+        <input type="${escapeHtml(type)}" name="${fieldName}" value="${otherValue}">
+        <span>${escapeHtml(field.other.label)}</span>
         <input
           class="choice-item__other-input"
           type="text"
           name="${otherName}"
-          placeholder="${field.other.placeholder || "Doplň odpoveď"}"
-          data-other-input-for="${field.name}"
+          placeholder="${escapeHtml(field.other.placeholder || "Doplň odpoveď")}"
+          data-other-input-for="${fieldName}"
         >
       </label>
     `;
@@ -1382,6 +1365,12 @@
     const submissionConfig = questionnaireState.config
       ? questionnaireState.config.submission
       : config.questionnaire.submission;
+    const questionnaireValues = Object.fromEntries(
+      getSubmissionFieldNames().map((fieldName) => [
+        fieldName,
+        normalizeFieldValue(values[fieldName], values[`${fieldName}__other`])
+      ])
+    );
 
     return {
       access_key: submissionConfig.accessKey,
@@ -1389,35 +1378,25 @@
       submittedAt: new Date().toISOString(),
       pageTitle: config.brand.pageTitle,
       service: values.selectedService || "",
-      cooperationType: normalizeFieldValue(values.cooperationType, values.cooperationType__other),
-      goals: normalizeFieldValue(values.goals, values.goals__other),
-      trainingApproach: normalizeFieldValue(values.trainingApproach, values.trainingApproach__other),
-      currentFrustration: values.currentFrustration || "",
-      blockers: normalizeFieldValue(values.blockers, values.blockers__other),
-      trainingExperience: normalizeFieldValue(values.trainingExperience, values.trainingExperience__other),
-      limitations: normalizeFieldValue(values.limitations, values.limitations__other),
-      mainPriority: normalizeFieldValue(values.mainPriority, values.mainPriority__other),
-      weakPoints: normalizeFieldValue(values.weakPoints, values.weakPoints__other),
-      legApproach: normalizeFieldValue(values.legApproach, values.legApproach__other),
-      legPriority: normalizeFieldValue(values.legPriority, values.legPriority__other),
-      splitPreference: normalizeFieldValue(values.splitPreference, values.splitPreference__other),
-      trainingLevel: normalizeFieldValue(values.trainingLevel, values.trainingLevel__other),
-      sessionsPerWeek: normalizeFieldValue(values.sessionsPerWeek, values.sessionsPerWeek__other),
-      scheduleRegularity: normalizeFieldValue(values.scheduleRegularity, values.scheduleRegularity__other),
-      workoutLength: normalizeFieldValue(values.workoutLength, values.workoutLength__other),
-      equipmentAccess: normalizeFieldValue(values.equipmentAccess, values.equipmentAccess__other),
-      cardioApproach: normalizeFieldValue(values.cardioApproach, values.cardioApproach__other),
-      dietStatus: normalizeFieldValue(values.dietStatus, values.dietStatus__other),
-      age: values.age || "",
-      height: values.height || "",
-      weight: values.weight || "",
-      contactHandle: values.contactHandle || "",
-      email: values.email || "",
-      gender: normalizeFieldValue(values.gender, values.gender__other),
-      fullName: values.fullName || "",
-      whyNow: values.whyNow || "",
-      additionalInfo: values.additionalInfo || ""
+      ...questionnaireValues
     };
+  }
+
+  function getSubmissionFieldNames() {
+    const questionnaireConfigs = [
+      config.questionnaire,
+      ...Object.values(config.questionnaire.flows || {})
+    ];
+    const configuredFieldNames = questionnaireConfigs.flatMap((questionnaireConfig) =>
+      (questionnaireConfig.steps || []).flatMap((step) =>
+        (step.fields || []).map((field) => field.name)
+      )
+    );
+    const initialValueNames = config.offers.flatMap((offer) =>
+      Object.keys(offer.initialValues || {})
+    );
+
+    return [...new Set([...initialValueNames, ...configuredFieldNames, "email"])];
   }
 
   function normalizeFieldValue(value, otherValue) {
@@ -1493,20 +1472,20 @@
   function setupStepValuePersistence() {
     const inputs = dom.stepFields.querySelectorAll("input, select, textarea");
 
-      inputs.forEach((input) => {
-        input.addEventListener("input", () => {
-          persistVisibleValues();
-          syncInlineFieldError(input);
-          syncStepActionState();
-        });
-
-        input.addEventListener("change", () => {
-          persistVisibleValues();
-          syncInlineFieldError(input);
-          syncStepActionState();
-        });
+    inputs.forEach((input) => {
+      input.addEventListener("input", () => {
+        persistVisibleValues();
+        syncInlineFieldError(input);
+        syncStepActionState();
       });
-    }
+
+      input.addEventListener("change", () => {
+        persistVisibleValues();
+        syncInlineFieldError(input);
+        syncStepActionState();
+      });
+    });
+  }
 
   function syncInlineFieldError(input) {
     if (!(input instanceof HTMLInputElement)) {
@@ -1630,19 +1609,6 @@
       return;
     }
 
-    if (!questionnaireState.runtime) {
-      return;
-    }
-
-    if (questionnaireState.activeStepIndex >= questionnaireState.runtime.pages.length - 2) {
-      window.clearTimeout(questionnaireState.autoAdvanceTimer);
-      questionnaireState.autoAdvanceTimer = window.setTimeout(() => {
-        questionnaireState.activeStepIndex += 1;
-        renderQuestionnaireStep();
-      }, config.questionnaire.autoAdvanceDelay || 160);
-      return;
-    }
-
     window.clearTimeout(questionnaireState.autoAdvanceTimer);
     questionnaireState.autoAdvanceTimer = window.setTimeout(() => {
       questionnaireState.activeStepIndex += 1;
@@ -1703,17 +1669,17 @@
   function renderSubmitStepMarkup() {
     return `
       <div class="questionnaire-review">
-        <p class="questionnaire-review__hint">${config.questionnaire.submitStep.editHint}</p>
+        <p class="questionnaire-review__hint">${escapeHtml(config.questionnaire.submitStep.editHint)}</p>
         <div class="form-field">
-          <label for="submit-email">${config.questionnaire.submitStep.emailLabel}</label>
+          <label for="submit-email">${escapeHtml(config.questionnaire.submitStep.emailLabel)}</label>
           <input
             id="submit-email"
             name="email"
             type="email"
             inputmode="email"
             autocomplete="email"
-            placeholder="${config.questionnaire.submitStep.emailPlaceholder}"
-            value="${questionnaireState.values.email || ""}"
+            placeholder="${escapeHtml(config.questionnaire.submitStep.emailPlaceholder)}"
+            value="${escapeHtml(questionnaireState.values.email || "")}"
             required
           >
           <p class="field-error" data-email-error aria-live="polite"></p>
